@@ -1,0 +1,26 @@
+{
+  "name": "Node.js 24 Development Dev Container",
+  "image": "siakhooi/devcontainer:nodejs24",
+  "remoteUser": "maui",
+  "containerUser": "maui",
+  "updateRemoteUserUID": true,
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "lfm.vscode-makefile-term",
+        "yzhang.markdown-all-in-one",
+        "kisstkondoros.vscode-codemetrics",
+        "dbaeumer.vscode-eslint",
+        "redhat.vscode-yaml",
+        "vitest.explorer",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  "mounts": ["source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"],
+  "postStartCommand": "sudo chmod 666 /var/run/docker.sock || true",
+  "remoteEnv": {
+    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+  }
+}
