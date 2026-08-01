@@ -22,5 +22,5 @@ jobs:
       - uses: qltysh/qlty-action/coverage@08a0a862c159eae9b9003081da6663d96efef637 # v2.3.0
         with:
           token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
-          coverage-files: coverage/lcov.info
+          files: coverage/lcov.info
           skip-errors: false
