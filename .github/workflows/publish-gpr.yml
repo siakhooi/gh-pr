@@ -22,6 +22,7 @@ jobs:
         with:
           node-version: 24
           registry-url: 'https://npm.pkg.github.com'
+          scope: '@siakhooi'
 
       - run: npm install
       - run: npm publish
