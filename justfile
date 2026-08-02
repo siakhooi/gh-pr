@@ -6,10 +6,14 @@ install:
     npm install
 build:
     npm run build
-run:
+run-v:
     node dist/cli.js --version
     node dist/cli.js  -V
     node dist/cli.js version
+run-h:
+    node dist/cli.js -h
+    node dist/cli.js --help
+    node dist/cli.js help
 all:
     just clean
     just set-version

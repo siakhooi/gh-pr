@@ -10,6 +10,8 @@ program
   .description('frequently used gh pr commands')
   .version(getVersion(), '-V, --version', 'output the current version');
 
+program.helpCommand('help [command]', 'display help for a command');
+
 program
   .command('version')
   .description('print version')
