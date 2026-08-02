@@ -1,3 +1,2 @@
-export function hello(): string {
-  return 'Hello, World!';
-}
+import { printList } from './list.js';
+export { printList };

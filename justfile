@@ -14,6 +14,8 @@ run-h:
     node dist/cli.js -h
     node dist/cli.js --help
     node dist/cli.js help
+run-list:
+    node dist/cli.js list
 all:
     just clean
     just set-version

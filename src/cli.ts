@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 
-import { hello } from './index.js';
+import { printList } from './index.js';
 import { getVersion } from './version.js';
 
 const program = new Command();
@@ -18,6 +18,10 @@ program
   .action(() => {
     console.log(getVersion());
   });
+program
+  .command('list')
+  .description('print list')
+  .action(() => {
+    printList();
+  });
 program.parse(process.argv);
-
-console.log(hello());
