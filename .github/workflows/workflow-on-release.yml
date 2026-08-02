@@ -1,0 +1,24 @@
+name: Release
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    uses: ./.github/workflows/workflow-on-pull-request.yml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+
+  npm:
+    needs: build
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/publish-npm.yml
+  gpr:
+    needs: build
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/publish-gpr.yml
