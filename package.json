@@ -1,6 +1,6 @@
 {
   "name": "@siakhooi/gh-pr",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "cli to run some frequently use gh pr commands",
   "type": "module",
   "publishConfig": {
@@ -8,10 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/siakhooi/gh-pr"
+    "url": "git+https://github.com/siakhooi/gh-pr.git"
   },
   "bin": {
-    "gh-pr": "./dist/cli.js"
+    "gh-pr": "dist/cli.js"
   },
   "exports": {
     ".": "./dist/index.js"
