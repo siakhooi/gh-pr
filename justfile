@@ -7,7 +7,9 @@ install:
 build:
     npm run build
 run:
-    node dist/cli.js
+    node dist/cli.js --version
+    node dist/cli.js  -V
+    node dist/cli.js version
 all:
     just clean
     just set-version
