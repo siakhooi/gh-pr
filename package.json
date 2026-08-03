@@ -44,6 +44,7 @@
     "vitest": "4.1.10"
   },
   "dependencies": {
+    "@octokit/rest": "^22.0.1",
     "commander": "^15.0.0"
   }
 }
