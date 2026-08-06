@@ -1,10 +1,11 @@
 import { Octokit } from '@octokit/rest';
 
-export async function getPullRequests(token: string) {
+export async function getPullRequests(token: string, query: string[]) {
   const octokit = new Octokit({ auth: token });
 
+  const queryString = query.join(' ');
   const { data } = await octokit.search.issuesAndPullRequests({
-    q: 'is:pr is:open assignee:@me author:app/dependabot label:github_actions',
+    q: queryString,
     per_page: 2,
   });
   return data.items.map((item) => ({

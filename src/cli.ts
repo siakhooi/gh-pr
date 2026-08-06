@@ -21,7 +21,5 @@ program
 program
   .command('list')
   .description('print list')
-  .action(() => {
-    printList();
-  });
+  .action(() => printList());
 program.parse(process.argv);

@@ -3,6 +3,12 @@ import { getPullRequests } from './github.js';
 
 export function printList(): void {
   const token = getTokenOrExit();
-  console.log('List of items...');
-  getPullRequests(token).then((data) => console.log(data));
+  const query: string[] = [
+    'is:pr',
+    'is:open',
+    'assignee:@me',
+    'author:app/dependabot',
+    'label:github_actions',
+  ];
+  getPullRequests(token, query).then((data) => console.log(data));
 }
