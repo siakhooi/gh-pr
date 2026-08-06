@@ -8,6 +8,7 @@ interface options {
   authoredByDependabot: boolean;
   authoredByRenovate: boolean;
   notYetReviewed: boolean;
+  countPerPage: number;
 }
 export function printList(options: options): void {
   const token = getTokenOrExit();
@@ -19,5 +20,5 @@ export function printList(options: options): void {
   if (options.authoredByRenovate) query.push('author:app/renovate');
   if (options.notYetReviewed) query.push('review:none');
 
-  getPullRequests(token, query).then((data) => console.log(data));
+  getPullRequests(token, query, options.countPerPage).then((data) => console.log(data));
 }

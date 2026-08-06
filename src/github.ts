@@ -1,13 +1,16 @@
 import { Octokit } from '@octokit/rest';
 
-export async function getPullRequests(token: string, query: string[]) {
+export async function getPullRequests(token: string, query: string[], countPerPage: int) {
   const octokit = new Octokit({ auth: token });
 
   const queryString = query.join(' ');
+
   console.log(`queryString: ${queryString}`);
+  console.log(`countPerPage: ${countPerPage}`);
+
   const { data } = await octokit.search.issuesAndPullRequests({
     q: queryString,
-    per_page: 2,
+    per_page: countPerPage,
   });
   return data.items.map((item) => ({
     title: item.title,

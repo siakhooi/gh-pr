@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { Command } from 'commander';
+import { Command, InvalidOptionArgumentError } from 'commander';
 
 import { printList } from './index.js';
 import { getVersion } from './version.js';
@@ -18,6 +18,16 @@ program
   .action(() => {
     console.log(getVersion());
   });
+
+const parseCountPerPage = (value) => {
+  const parsedValue = parseInt(value, 10);
+  if (isNaN(parsedValue)) {
+    throw new InvalidOptionArgumentError('Not a number');
+  }
+  if (parsedValue < 1) throw new InvalidOptionArgumentError('Must be a positive number');
+  return parsedValue;
+};
+
 program
   .command('list')
   .description('list open pull requests')
@@ -27,5 +37,11 @@ program
   .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false)
   .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
   .option('--not-yet-reviewed', 'Not yet reviewed, review:none', false)
+  .option(
+    '--count-per-page <int>',
+    'Count per page, positive number, default to 3',
+    parseCountPerPage,
+    '3',
+  )
   .action((options) => printList(options));
 program.parse(process.argv);
