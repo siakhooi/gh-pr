@@ -4,6 +4,7 @@ export async function getPullRequests(token: string, query: string[]) {
   const octokit = new Octokit({ auth: token });
 
   const queryString = query.join(' ');
+  console.log(`queryString: ${queryString}`);
   const { data } = await octokit.search.issuesAndPullRequests({
     q: queryString,
     per_page: 2,

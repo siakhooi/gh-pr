@@ -20,6 +20,12 @@ program
   });
 program
   .command('list')
-  .description('print list')
-  .action(() => printList());
+  .description('list open pull requests')
+  .option('--assigned-to-me', 'Assigned to me, assignee=@me', false)
+  .option('--requested-my-review', 'requested my review, review-requested=@me', false)
+  .option('--authored-by-me', 'Authored by me, author:@me', false)
+  .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false)
+  .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
+  .option('--not-yet-reviewed', 'Not yet reviewed, review:none', false)
+  .action((options) => printList(options));
 program.parse(process.argv);
