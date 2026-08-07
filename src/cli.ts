@@ -43,5 +43,7 @@ program
     parseCountPerPage,
     '3',
   )
+  .option('--user <string>', 'User')
+  .option('--repo <string>', 'Repo: user/repo_name')
   .action((options) => printList(options));
 program.parse(process.argv);
