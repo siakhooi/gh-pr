@@ -11,10 +11,12 @@ interface options {
   countPerPage: number;
   user: string;
   repo: string;
+  label: string[];
 }
 export function printList(options: options): void {
   const token = getTokenOrExit();
-  const query: string[] = ['is:pr', 'is:open', 'label:github_actions'];
+  const query: string[] = ['is:pr', 'is:open'];
+
   if (options.assignedToMe) query.push('assignee:@me');
   if (options.requestedMyReview) query.push('review-requested=@me');
   if (options.authoredByMe) query.push('author:@me');
@@ -23,6 +25,7 @@ export function printList(options: options): void {
   if (options.notYetReviewed) query.push('review:none');
   if (options.user) query.push(`user:${options.user}`);
   if (options.repo) query.push(`repo:${options.repo}`);
+  if (options.label) options.label.forEach((label) => query.push(`label:${label}`));
 
   getPullRequests(token, query, options.countPerPage).then((data) => console.log(data));
 }

@@ -28,6 +28,9 @@ const parseCountPerPage = (value) => {
   return parsedValue;
 };
 
+function collectLabels(value: string, collection: string[]): string[] {
+  return collection.concat([value]);
+}
 program
   .command('list')
   .description('list open pull requests')
@@ -45,5 +48,6 @@ program
   )
   .option('--user <string>', 'User')
   .option('--repo <string>', 'Repo: user/repo_name')
+  .option('--label <string>', 'label/topic, allow multiple', collectLabels, [])
   .action((options) => printList(options));
 program.parse(process.argv);
