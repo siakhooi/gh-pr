@@ -40,9 +40,9 @@ program
   .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false)
   .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
   .option('--not-yet-reviewed', 'Not yet reviewed, review:none', false)
-  .option('--limit <int>', 'Record limit, positive number, default to 3', parseLimit, '3')
-  .option('--user <username>', 'User')
-  .option('--repo <user/repo>', 'Repo: user/repo_name')
+  .option('-l, --limit <int>', 'Record limit, positive number, default to 3', parseLimit, '3')
+  .option('-u, --user <username>', 'User')
+  .option('-R, --repo <user/repo>', 'Repo: user/repo_name')
   .option('--label <label>', 'label/topic, allow multiple', collectLabels, [])
   .action((options) => printList(options));
 program.parse(process.argv);

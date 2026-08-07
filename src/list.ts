@@ -8,7 +8,7 @@ interface options {
   authoredByDependabot: boolean;
   authoredByRenovate: boolean;
   notYetReviewed: boolean;
-  countPerPage: number;
+  limit: number;
   user: string;
   repo: string;
   label: string[];
@@ -27,5 +27,5 @@ export function printList(options: options): void {
   if (options.repo) query.push(`repo:${options.repo}`);
   if (options.label) options.label.forEach((label) => query.push(`label:${label}`));
 
-  getPullRequests(token, query, options.countPerPage).then((data) => console.log(data));
+  getPullRequests(token, query, options.limit).then((data) => console.log(data));
 }
