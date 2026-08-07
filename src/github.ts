@@ -18,5 +18,6 @@ export async function getPullRequests(token: string, query: string[], countPerPa
     repo_url: item.repository_url,
     repository: item.repository_url.split('/').slice(-2).join('/'),
     number: item.number,
+    labels: item.labels.map((l) => l.name),
   }));
 }

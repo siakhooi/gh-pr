@@ -46,8 +46,8 @@ program
     parseCountPerPage,
     '3',
   )
-  .option('--user <string>', 'User')
-  .option('--repo <string>', 'Repo: user/repo_name')
-  .option('--label <string>', 'label/topic, allow multiple', collectLabels, [])
+  .option('--user <username>', 'User')
+  .option('--repo <user/repo>', 'Repo: user/repo_name')
+  .option('--label <label>', 'label/topic, allow multiple', collectLabels, [])
   .action((options) => printList(options));
 program.parse(process.argv);
