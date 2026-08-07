@@ -19,14 +19,14 @@ program
     console.log(getVersion());
   });
 
-const parseCountPerPage = (value) => {
+function parseLimit(value: string): number {
   const parsedValue = parseInt(value, 10);
   if (isNaN(parsedValue)) {
     throw new InvalidOptionArgumentError('Not a number');
   }
   if (parsedValue < 1) throw new InvalidOptionArgumentError('Must be a positive number');
   return parsedValue;
-};
+}
 
 function collectLabels(value: string, collection: string[]): string[] {
   return collection.concat([value]);
@@ -40,12 +40,7 @@ program
   .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false)
   .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
   .option('--not-yet-reviewed', 'Not yet reviewed, review:none', false)
-  .option(
-    '--count-per-page <int>',
-    'Count per page, positive number, default to 3',
-    parseCountPerPage,
-    '3',
-  )
+  .option('--limit <int>', 'Record limit, positive number, default to 3', parseLimit, '3')
   .option('--user <username>', 'User')
   .option('--repo <user/repo>', 'Repo: user/repo_name')
   .option('--label <label>', 'label/topic, allow multiple', collectLabels, [])
