@@ -12,7 +12,7 @@ describe('getTokenOrExit', () => {
   });
   it('token is defined', () => {
     process.env.GITHUB_TOKEN = 'ABC';
-    expect(getTokenOrExit(), 'ABC');
+    expect(getTokenOrExit()).toBe('ABC');
   });
   it('token is not defined', () => {
     delete process.env.GITHUB_TOKEN;

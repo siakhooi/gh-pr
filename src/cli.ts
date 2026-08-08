@@ -20,8 +20,8 @@ program
   });
 
 function parseLimit(value: string): number {
-  const parsedValue = parseInt(value, 10);
-  if (isNaN(parsedValue)) throw new InvalidOptionArgumentError('Not a number');
+  const parsedValue = Number.parseInt(value, 10);
+  if (Number.isNaN(parsedValue)) throw new InvalidOptionArgumentError('Not a number');
   if (parsedValue < 1) throw new InvalidOptionArgumentError('Must be a positive number');
   return parsedValue;
 }

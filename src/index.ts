@@ -1,2 +1,1 @@
-import { printList } from './list.js';
-export { printList };
+export { printList } from './list.js';
