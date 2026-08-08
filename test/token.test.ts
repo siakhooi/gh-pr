@@ -11,9 +11,7 @@ describe('getTokenOrExit', () => {
     vi.restoreAllMocks();
   });
   it('token is defined', () => {
-    vi.mock('process', () => ({
-      env: { GITHUB_TOKEN: 'ABC' },
-    }));
+    process.env.GITHUB_TOKEN = 'ABC';
     expect(getTokenOrExit(), 'ABC');
   });
   it('token is not defined', () => {
