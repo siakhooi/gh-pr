@@ -5,9 +5,6 @@ export async function getPullRequests(token: string, query: string[], countPerPa
 
   const queryString = query.join(' ');
 
-  console.log(`queryString: ${queryString}`);
-  console.log(`countPerPage: ${countPerPage}`);
-
   const { data } = await octokit.search.issuesAndPullRequests({
     q: queryString,
     per_page: countPerPage,

@@ -1,7 +1,7 @@
 import { getTokenOrExit } from './token.js';
 import { getPullRequests } from './github.js';
 
-interface options {
+interface listOptions {
   assignedToMe: boolean;
   requestedMyReview: boolean;
   authoredByMe: boolean;
@@ -13,7 +13,7 @@ interface options {
   repo: string;
   label: string[];
 }
-export function printList(options: options): void {
+export function printList(options: listOptions): void {
   const token = getTokenOrExit();
   const query: string[] = ['is:pr', 'is:open'];
 

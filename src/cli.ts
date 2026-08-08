@@ -21,9 +21,7 @@ program
 
 function parseLimit(value: string): number {
   const parsedValue = parseInt(value, 10);
-  if (isNaN(parsedValue)) {
-    throw new InvalidOptionArgumentError('Not a number');
-  }
+  if (isNaN(parsedValue)) throw new InvalidOptionArgumentError('Not a number');
   if (parsedValue < 1) throw new InvalidOptionArgumentError('Must be a positive number');
   return parsedValue;
 }
@@ -40,7 +38,12 @@ program
   .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false)
   .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
   .option('--not-yet-reviewed', 'Not yet reviewed, review:none', false)
-  .option('-l, --limit <int>', 'Record limit, positive number, default to 3', parseLimit, '3')
+  .option(
+    '-l, --limit <int>',
+    'Number of Records to retrieve, positive number, default to 3',
+    parseLimit,
+    '3',
+  )
   .option('-u, --user <username>', 'User')
   .option('-R, --repo <user/repo>', 'Repo: user/repo_name')
   .option('--label <label>', 'label/topic, allow multiple', collectLabels, [])
