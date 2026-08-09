@@ -25,7 +25,9 @@ export function printList(options: ListOptions): void {
   if (options.notYetReviewed) query.push('review:none');
   if (options.user) query.push(`user:${options.user}`);
   if (options.repo) query.push(`repo:${options.repo}`);
-  if (options.label) options.label.forEach((label) => query.push(`label:${label}`));
+  if (options.label && options.label.length > 0) {
+    options.label.forEach((label) => query.push(`label:${label}`));
+  }
 
   getPullRequests(token, query, options.limit).then((data) => console.log(data));
 }
