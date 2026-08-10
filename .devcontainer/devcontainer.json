@@ -14,6 +14,7 @@
         "dbaeumer.vscode-eslint",
         "redhat.vscode-yaml",
         "vitest.explorer",
+        "firsttris.vscode-jest-runner",
         "esbenp.prettier-vscode"
       ]
     }
