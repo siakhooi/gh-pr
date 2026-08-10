@@ -1,5 +1,6 @@
 import { getTokenOrExit } from './token.js';
 import { getPullRequests } from './github.js';
+import { printListData } from './printer.js';
 
 interface ListOptions {
   assignedToMe: boolean;
@@ -29,5 +30,5 @@ export function printList(options: ListOptions): void {
     options.label.forEach((label) => query.push(`label:${label}`));
   }
 
-  getPullRequests(token, query, options.limit).then((data) => console.log(data));
+  getPullRequests(token, query, options.limit).then((data) => printListData(data));
 }

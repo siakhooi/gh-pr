@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { printList } from '../src/list.js';
 import { getTokenOrExit } from '../src/token.js';
 import { getPullRequests } from '../src/github.js';
+import { printListData } from '../src/printer.js';
 
 vi.mock('../src/token.js', () => ({
   getTokenOrExit: vi.fn(),
@@ -10,11 +11,13 @@ vi.mock('../src/token.js', () => ({
 vi.mock('../src/github.js', () => ({
   getPullRequests: vi.fn(),
 }));
+vi.mock('../src/printer.js', () => ({
+  printListData: vi.fn(),
+}));
 
 describe('printList', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   it('builds the expected GitHub search query and logs the results', async () => {
@@ -57,7 +60,7 @@ describe('printList', () => {
       );
     });
 
-    expect(console.log).toHaveBeenCalledWith(result);
+    expect(printListData).toHaveBeenCalledWith(result);
   });
 
   it('keeps only the default open PR query when all optional filters are off', async () => {
@@ -81,6 +84,6 @@ describe('printList', () => {
       expect(getPullRequests).toHaveBeenCalledWith('token-456', ['is:pr', 'is:open'], 5);
     });
 
-    expect(console.log).toHaveBeenCalledWith([]);
+    expect(printListData).toHaveBeenCalledWith([]);
   });
 });
