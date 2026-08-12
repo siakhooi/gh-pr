@@ -1,6 +1,6 @@
 import { Octokit } from '@octokit/rest';
 
-export async function getPullRequests(token: string, query: string[], countPerPage: int) {
+export async function searchPullRequests(token: string, query: string[], countPerPage: int) {
   const octokit = new Octokit({ auth: token });
 
   const queryString = query.join(' ');

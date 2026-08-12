@@ -6,7 +6,7 @@ const { printListMock, getVersionMock } = vi.hoisted(() => ({
 }));
 
 vi.mock('../src/index.js', () => ({
-  printList: printListMock,
+  performListCommand: printListMock,
 }));
 
 vi.mock('../src/version.js', () => ({

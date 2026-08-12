@@ -1,5 +1,5 @@
 import { getTokenOrExit } from './token.js';
-import { getPullRequests } from './github.js';
+import { searchPullRequests } from './github.js';
 import { printListData } from './printer.js';
 
 interface ListOptions {
@@ -14,7 +14,7 @@ interface ListOptions {
   repo: string;
   label: string[];
 }
-export function printList(options: ListOptions): void {
+export function performListCommand(options: ListOptions): void {
   const token = getTokenOrExit();
   const query: string[] = ['is:pr', 'is:open'];
 
@@ -30,5 +30,5 @@ export function printList(options: ListOptions): void {
     options.label.forEach((label) => query.push(`label:${label}`));
   }
 
-  getPullRequests(token, query, options.limit).then((data) => printListData(data));
+  searchPullRequests(token, query, options.limit).then((data) => printListData(data));
 }

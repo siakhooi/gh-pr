@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command, InvalidOptionArgumentError } from 'commander';
 
-import { printList } from './index.js';
+import { performListCommand } from './index.js';
 import { getVersion } from './version.js';
 
 const program = new Command();
@@ -42,5 +42,5 @@ program
   .option('-u, --user <username>', 'User')
   .option('-R, --repo <user/repo>', 'Repo: user/repo_name')
   .option('--label <label>', 'label/topic, allow multiple', collectLabels, [])
-  .action((options) => printList(options));
+  .action((options) => performListCommand(options));
 program.parse(process.argv);

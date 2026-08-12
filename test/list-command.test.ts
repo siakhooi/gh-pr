@@ -1,21 +1,20 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { printList } from '../src/list.js';
+import { performListCommand } from '../src/list-command.js';
 import { getTokenOrExit } from '../src/token.js';
-import { getPullRequests } from '../src/github.js';
+import { searchPullRequests } from '../src/github.js';
 import { printListData } from '../src/printer.js';
 
 vi.mock('../src/token.js', () => ({
   getTokenOrExit: vi.fn(),
 }));
-
 vi.mock('../src/github.js', () => ({
-  getPullRequests: vi.fn(),
+  searchPullRequests: vi.fn(),
 }));
 vi.mock('../src/printer.js', () => ({
   printListData: vi.fn(),
 }));
 
-describe('printList', () => {
+describe('performListCommand', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -24,9 +23,9 @@ describe('printList', () => {
     vi.mocked(getTokenOrExit).mockReturnValue('token-123');
 
     const result = [{ title: 'Fix failing tests', pr_url: 'https://example.com/pr/1' }];
-    vi.mocked(getPullRequests).mockResolvedValue(result as never);
+    vi.mocked(searchPullRequests).mockResolvedValue(result as never);
 
-    printList({
+    performListCommand({
       assignedToMe: true,
       requestedMyReview: true,
       authoredByMe: true,
@@ -40,7 +39,7 @@ describe('printList', () => {
     });
 
     await vi.waitFor(() => {
-      expect(getPullRequests).toHaveBeenCalledWith(
+      expect(searchPullRequests).toHaveBeenCalledWith(
         'token-123',
         [
           'is:pr',
@@ -65,9 +64,9 @@ describe('printList', () => {
 
   it('keeps only the default open PR query when all optional filters are off', async () => {
     vi.mocked(getTokenOrExit).mockReturnValue('token-456');
-    vi.mocked(getPullRequests).mockResolvedValue([] as never);
+    vi.mocked(searchPullRequests).mockResolvedValue([] as never);
 
-    printList({
+    performListCommand({
       assignedToMe: false,
       requestedMyReview: false,
       authoredByMe: false,
@@ -81,7 +80,7 @@ describe('printList', () => {
     });
 
     await vi.waitFor(() => {
-      expect(getPullRequests).toHaveBeenCalledWith('token-456', ['is:pr', 'is:open'], 5);
+      expect(searchPullRequests).toHaveBeenCalledWith('token-456', ['is:pr', 'is:open'], 5);
     });
 
     expect(printListData).toHaveBeenCalledWith([]);
