@@ -1,1 +1,1 @@
-export { printList } from './list.js';
+export { performListCommand } from './list-command.js';

@@ -14,7 +14,7 @@ interface ListOptions {
   repo: string;
   label: string[];
 }
-export function printList(options: ListOptions): void {
+export function performListCommand(options: ListOptions): void {
   const token = getTokenOrExit();
   const query: string[] = ['is:pr', 'is:open'];
 
