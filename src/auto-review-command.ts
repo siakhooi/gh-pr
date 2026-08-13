@@ -5,11 +5,12 @@ interface AutoReviewOptions {
   authoredByDependabot: boolean;
   authoredByRenovate: boolean;
   notYetReviewed: boolean;
-  notYetReviewedByMe: boolean;
   limit: number;
   user: string;
   repo: string;
   label: string[];
+  maxUpdate: number;
+  maxUpdatePerRepo: number;
 }
 
 export function performAutoReviewCommand(options: AutoReviewOptions): void {
