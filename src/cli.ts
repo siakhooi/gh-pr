@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command, InvalidOptionArgumentError } from 'commander';
 
-import { performListCommand } from './index.js';
+import { performListCommand, performAutoReviewCommand } from './index.js';
 import { getVersion } from './version.js';
 
 const program = new Command();
@@ -43,4 +43,10 @@ program
   .option('-R, --repo <user/repo>', 'Repo: user/repo_name')
   .option('--label <label>', 'label/topic, allow multiple', collectLabels, [])
   .action((options) => performListCommand(options));
+
+program
+  .command('autoreview')
+  .description('auto review selected pull requests')
+  .action((options) => performAutoReviewCommand(options));
+
 program.parse(process.argv);
