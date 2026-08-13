@@ -2,7 +2,7 @@ import { getTokenOrExit } from './token.js';
 import { searchPullRequests } from './github.js';
 import { printListData } from './printer.js';
 
-interface ListOptions {
+interface ListCommandOptions {
   assignedToMe: boolean;
   requestedMyReview: boolean;
   authoredByMe: boolean;
@@ -14,7 +14,7 @@ interface ListOptions {
   repo: string;
   label: string[];
 }
-export function performListCommand(options: ListOptions): void {
+export function performListCommand(options: ListCommandOptions): void {
   const token = getTokenOrExit();
   const query: string[] = ['is:pr', 'is:open'];
 
