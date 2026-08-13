@@ -14,21 +14,36 @@ interface ListCommandOptions {
   repo: string;
   label: string[];
 }
+
+function buildPullRequestSearchQuery(options: ListCommandOptions): string[] {
+  const query: string[] = ['is:pr', 'is:open'];
+  const filters: Array<[boolean, string]> = [
+    [options.assignedToMe, 'assignee:@me'],
+    [options.requestedMyReview, 'review-requested=@me'],
+    [options.authoredByMe, 'author:@me'],
+    [options.authoredByDependabot, 'author:app/dependabot'],
+    [options.authoredByRenovate, 'author:app/renovate'],
+    [options.notYetReviewed, 'review:none'],
+    [Boolean(options.user), `user:${options.user}`],
+    [Boolean(options.repo), `repo:${options.repo}`],
+  ];
+
+  for (const [enabled, term] of filters) {
+    if (enabled) query.push(term);
+  }
+
+  if (options.label && options.label.length > 0) {
+    for (const label of options.label) {
+      query.push(`label:${label}`);
+    }
+  }
+
+  return query;
+}
+
 export function performListCommand(options: ListCommandOptions): void {
   const token = getTokenOrExit();
-  const query: string[] = ['is:pr', 'is:open'];
-
-  if (options.assignedToMe) query.push('assignee:@me');
-  if (options.requestedMyReview) query.push('review-requested=@me');
-  if (options.authoredByMe) query.push('author:@me');
-  if (options.authoredByDependabot) query.push('author:app/dependabot');
-  if (options.authoredByRenovate) query.push('author:app/renovate');
-  if (options.notYetReviewed) query.push('review:none');
-  if (options.user) query.push(`user:${options.user}`);
-  if (options.repo) query.push(`repo:${options.repo}`);
-  if (options.label && options.label.length > 0) {
-    options.label.forEach((label) => query.push(`label:${label}`));
-  }
+  const query = buildPullRequestSearchQuery(options);
 
   searchPullRequests(token, query, options.limit).then((data) => printListData(data));
 }
