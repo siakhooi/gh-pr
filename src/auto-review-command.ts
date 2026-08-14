@@ -1,5 +1,5 @@
 import { getTokenOrExit } from './token.js';
-import { searchPullRequests } from './github.js';
+import { searchPullRequests, getPulls } from './github.js';
 
 interface AutoReviewCommandOptions {
   assignedToMe: boolean;
@@ -41,31 +41,38 @@ function buildPullRequestSearchQuery(options: AutoReviewCommandOptions): string[
 
   return query;
 }
-export function performAutoReviewCommand(options: AutoReviewCommandOptions): void {
+export async function performAutoReviewCommand(options: AutoReviewCommandOptions): void {
   const token = getTokenOrExit();
   const query = buildPullRequestSearchQuery(options);
   let updateCount = 0;
   const repoUpdateCountMap: Record<string, number> = {};
 
-  searchPullRequests(token, query, options.limit).then((data) => {
+  searchPullRequests(token, query, options.limit).then(async (data) => {
     for (const pr of data) {
-      const repo = pr.repo_url;
-      console.log(`PR #${pr.number}: ${pr.title}`);
-      console.log(`repo: ${repo}`);
+      const repo_url = pr.repo_url;
+      const repo = pr.repo;
+      const owner = pr.owner;
+      const pull_number = pr.number;
+      console.log(`PR #${pull_number}: ${pr.title}, ${owner}, ${repo}, ${repo_url}`);
 
-      if (repoUpdateCountMap[repo] >= options.maxUpdatePerRepo) {
+      if (repoUpdateCountMap[repo_url] >= options.maxUpdatePerRepo) {
         console.log(
-          `Reached max update limit of ${options.maxUpdatePerRepo} for repo ${repo}. Skipping further updates for this repo.`,
+          `Reached max update limit of ${options.maxUpdatePerRepo} for repo ${repo_url}. Skipping further updates for this repo.`,
         );
         continue;
       }
+      const pull = await getPulls(token, owner, repo, pull_number);
+      console.log(`Pulls: ${pull.mergeable}, ${pull.mergeable_state}, ${pull.commit}`);
+      if (!pull.mergeable || pull.mergeable_state !== 'clean') {
+        console.log(`Pulls not mergeable: ${pull.mergeable}, ${pull.mergeable_state}`);
+        continue;
+      }
 
-      // check mergeable
       // check if reviewed before
       // submit review
 
       updateCount = updateCount + 1;
-      repoUpdateCountMap[repo] = (repoUpdateCountMap[repo] || 0) + 1;
+      repoUpdateCountMap[repo_url] = (repoUpdateCountMap[repo_url] || 0) + 1;
 
       if (updateCount >= options.maxUpdate) {
         console.log(`Reached max update limit of ${options.maxUpdate}. Stopping further updates.`);
