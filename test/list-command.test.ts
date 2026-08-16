@@ -45,7 +45,7 @@ describe('performListCommand', () => {
           'is:pr',
           'is:open',
           'assignee:@me',
-          'review-requested=@me',
+          'user-review-requested:@me',
           'author:@me',
           'author:app/dependabot',
           'author:app/renovate',
