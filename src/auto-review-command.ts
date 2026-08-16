@@ -27,7 +27,7 @@ function buildPullRequestSearchQuery(options: AutoReviewCommandOptions): string[
   const query: string[] = ['is:pr', 'is:open'];
   const filters: Array<[boolean, string]> = [
     [options.assignedToMe, 'assignee:@me'],
-    [options.requestedMyReview, 'review-requested=@me'],
+    [options.requestedMyReview, 'user-review-requested:@me'],
     [options.authoredByMe, 'author:@me'],
     [options.authoredByDependabot, 'author:app/dependabot'],
     [options.authoredByRenovate, 'author:app/renovate'],
