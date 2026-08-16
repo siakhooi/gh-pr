@@ -1,11 +1,10 @@
 import { getTokenOrExit } from './token.js';
 import {
   searchPullRequests,
-  //   getPulls,
-  //   getPullsReviews,
-  //   getUsersAuthenticated,
-  //   getChecksListForRef,
-  //   createReviews,
+  getPulls,
+  getPullsReviews,
+  getUsersAuthenticated,
+  getChecksListForRef,
 } from './github.js';
 interface AutoMergeCommandOptions {
   assignedToMe: boolean;
@@ -45,10 +44,60 @@ function buildPullRequestSearchQuery(options: AutoMergeCommandOptions): string[]
 export async function performAutoMergeCommand(options: AutoMergeCommandOptions): void {
   const token = getTokenOrExit();
   const query = buildPullRequestSearchQuery(options);
-  //   let updateCount = 0;
-  //   const repoUpdateCountMap: Record<string, number> = {};
+  let updateCount = 0;
+  const repoUpdateCountMap: Record<string, number> = {};
 
   searchPullRequests(token, query, options.limit).then(async (data) => {
-    console.log(JSON.stringify(data));
+    for (const pr of data) {
+      const repo_url = pr.repo_url;
+      const repo = pr.repo;
+      const owner = pr.owner;
+      const pull_number = pr.number;
+
+      if (repoUpdateCountMap[repo_url] >= options.maxUpdatePerRepo) {
+        console.log(
+          `SKIP: ${pr.repository} Reached max update limit of ${options.maxUpdatePerRepo} for repo ${repo_url}.`,
+        );
+        continue;
+      }
+      console.log(`PR: ${owner}/${repo}/${pull_number}`);
+      const pull = await getPulls(token, owner, repo, pull_number);
+      const commit = pull.commit;
+
+      // check if reviewed before
+      const reviews = await getPullsReviews(token, owner, repo, pull_number);
+      const myUser = await getUsersAuthenticated(token);
+      const myReview = reviews.some(
+        (review) => review.user?.login === myUser.login && review.state === 'APPROVED',
+      );
+      if (!myReview) {
+        console.log(
+          `SKIP: The pull request ${owner}/${repo}/${pull_number} has not been reviewed and approved by current user ${myUser.login}`,
+        );
+        continue;
+      }
+      // check if pipeline run success
+      const checks = await getChecksListForRef(token, owner, repo, commit);
+      if (checks.total_count === 0) {
+        console.log(`SKIP: no checks have been done.`);
+        continue;
+      }
+      if (!checks.check_runs.every((c) => c.conclusion === 'success' && c.status === 'completed')) {
+        console.log(`SKIP: not all checks success`);
+        continue;
+      }
+
+      // submit review
+      console.log('Doing something');
+      console.log('Auto Merge');
+
+      updateCount = updateCount + 1;
+      repoUpdateCountMap[repo_url] = (repoUpdateCountMap[repo_url] || 0) + 1;
+
+      if (updateCount >= options.maxUpdate) {
+        console.log(`STOP: Reached max update limit of ${options.maxUpdate}.`);
+        break;
+      }
+    }
   });
 }
