@@ -1,5 +1,5 @@
 import { getTokenOrExit } from './token.js';
-import { searchPullRequests, getPulls } from './github.js';
+import { searchPullRequests, getPulls, getPullsReviews, getUsersAuthenticated } from './github.js';
 
 interface AutoReviewCommandOptions {
   assignedToMe: boolean;
@@ -53,7 +53,6 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
       const repo = pr.repo;
       const owner = pr.owner;
       const pull_number = pr.number;
-      console.log(`PR #${pull_number}: ${pr.title}, ${owner}, ${repo}, ${repo_url}`);
 
       if (repoUpdateCountMap[repo_url] >= options.maxUpdatePerRepo) {
         console.log(
@@ -63,13 +62,26 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
       }
       const pull = await getPulls(token, owner, repo, pull_number);
       console.log(`Pulls: ${pull.mergeable}, ${pull.mergeable_state}, ${pull.commit}`);
-      if (!pull.mergeable || pull.mergeable_state !== 'clean') {
-        console.log(`Pulls not mergeable: ${pull.mergeable}, ${pull.mergeable_state}`);
+      // if (!pull.mergeable || pull.mergeable_state !== 'clean') {
+      //   console.log(`SKIP: Pulls not mergeable: ${pull.mergeable}, ${pull.mergeable_state}`);
+      //   continue;
+      // }
+
+      // check if reviewed before
+      const reviews = await getPullsReviews(token, owner, repo, pull_number);
+      const myUser = await getUsersAuthenticated(token);
+      const myReview = reviews.some((review) => review.user?.login === myUser.login);
+      if (myReview) {
+        console.log(
+          `SKIP: The pull request ${owner}/${repo}/${pull_number} has been reviewed by current user ${myUser.login}`,
+        );
         continue;
       }
 
-      // check if reviewed before
+      // check if pipeline run success
+
       // submit review
+      console.log('DO SOMETHING?');
 
       updateCount = updateCount + 1;
       repoUpdateCountMap[repo_url] = (repoUpdateCountMap[repo_url] || 0) + 1;
