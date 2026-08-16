@@ -63,8 +63,12 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
       console.log(`PR: ${owner}/${repo}/${pull_number}`);
       const pull = await getPulls(token, owner, repo, pull_number);
       const commit = pull.commit;
-
-      // check if reviewed before
+      // check if mergeable
+      if (!pull.mergeable || pull.mergeable_state !== 'clean') {
+        console.log(`SKIP: Pull not mergeable: ${pull.mergeable}, ${pull.mergeable_state}`);
+        continue;
+      }
+      // check if reviewed and approved by current user
       const reviews = await getPullsReviews(token, owner, repo, pull_number);
       const myUser = await getUsersAuthenticated(token);
       const myReview = reviews.some(
