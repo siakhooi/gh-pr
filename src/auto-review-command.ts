@@ -94,8 +94,8 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
       }
 
       // submit review
-      console.log('Auto Reviewed');
       createReviews(token, owner, repo, pull_number);
+      console.log('Auto Reviewed');
 
       updateCount = updateCount + 1;
       repoUpdateCountMap[repo_url] = (repoUpdateCountMap[repo_url] || 0) + 1;
