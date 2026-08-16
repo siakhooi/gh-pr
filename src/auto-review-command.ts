@@ -5,6 +5,7 @@ import {
   getPullsReviews,
   getUsersAuthenticated,
   getChecksListForRef,
+  createReviews,
 } from './github.js';
 
 interface AutoReviewCommandOptions {
@@ -98,7 +99,8 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
       }
 
       // submit review
-      console.log('DO SOMETHING?');
+      console.log('Auto Reviewed');
+      createReviews(token, owner, repo, pull_number);
 
       updateCount = updateCount + 1;
       repoUpdateCountMap[repo_url] = (repoUpdateCountMap[repo_url] || 0) + 1;

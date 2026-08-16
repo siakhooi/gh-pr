@@ -53,3 +53,18 @@ export async function getChecksListForRef(token: string, owner: string, repo: st
   const { data } = await octokit.rest.checks.listForRef({ owner, repo, ref });
   return data;
 }
+export async function createReviews(
+  token: string,
+  owner: string,
+  repo: string,
+  pull_number: number,
+) {
+  const octokit = new Octokit({ auth: token });
+  await octokit.rest.pulls.createReview({
+    owner,
+    repo,
+    pull_number,
+    body: 'Automatically approved by gh-pr.',
+    event: 'APPROVE',
+  });
+}
