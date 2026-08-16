@@ -63,18 +63,13 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
 
       if (repoUpdateCountMap[repo_url] >= options.maxUpdatePerRepo) {
         console.log(
-          `Reached max update limit of ${options.maxUpdatePerRepo} for repo ${repo_url}. Skipping further updates for this repo.`,
+          `SKIP: ${pr.repository} Reached max update limit of ${options.maxUpdatePerRepo} for repo ${repo_url}.`,
         );
         continue;
       }
       console.log(`PR: ${owner}/${repo}/${pull_number}`);
       const pull = await getPulls(token, owner, repo, pull_number);
       const commit = pull.commit;
-      // console.log(`Pulls: ${pull.mergeable}, ${pull.mergeable_state}, ${pull.commit}`);
-      // if (!pull.mergeable || pull.mergeable_state !== 'clean') {
-      //   console.log(`SKIP: Pulls not mergeable: ${pull.mergeable}, ${pull.mergeable_state}`);
-      //   continue;
-      // }
 
       // check if reviewed before
       const reviews = await getPullsReviews(token, owner, repo, pull_number);
@@ -106,7 +101,7 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
       repoUpdateCountMap[repo_url] = (repoUpdateCountMap[repo_url] || 0) + 1;
 
       if (updateCount >= options.maxUpdate) {
-        console.log(`Reached max update limit of ${options.maxUpdate}. Stopping further updates.`);
+        console.log(`STOP: Reached max update limit of ${options.maxUpdate}.`);
         break;
       }
     }
