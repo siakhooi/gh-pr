@@ -78,9 +78,7 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
       // check if reviewed before
       const reviews = await getPullsReviews(token, owner, repo, pull_number);
       const myUser = await getUsersAuthenticated(token);
-      const myReview = reviews.some(
-        (review) => review.user?.login === myUser.login && review.state === 'APPROVED',
-      );
+      const myReview = reviews.some((review) => review.user?.login === myUser.login);
       if (myReview) {
         console.log(
           `SKIP: The pull request ${owner}/${repo}/${pull_number} has been reviewed by current user ${myUser.login}`,
@@ -94,7 +92,7 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
         console.log(`SKIP: no checks have been done.`);
         continue;
       }
-      if (!checks.check_runs.every((c) => c.conclusion === 'success')) {
+      if (!checks.check_runs.every((c) => c.conclusion === 'success' && c.status === 'completed')) {
         console.log(`SKIP: not all checks success`);
         continue;
       }
