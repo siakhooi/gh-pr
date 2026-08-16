@@ -27,7 +27,6 @@ export async function searchPullRequests(token: string, query: string[], countPe
 export async function getPulls(token: string, owner: string, repo: string, pull_number: number) {
   const octokit = new Octokit({ auth: token });
   const { data } = await octokit.rest.pulls.get({ owner, repo, pull_number });
-  // console.log(`pull data: ${JSON.stringify(data)}`);
   return {
     mergeable: data.mergeable,
     mergeable_state: data.mergeable_state,
@@ -47,5 +46,10 @@ export async function getPullsReviews(
 export async function getUsersAuthenticated(token: string) {
   const octokit = new Octokit({ auth: token });
   const { data } = await octokit.rest.users.getAuthenticated();
+  return { login: data.login };
+}
+export async function getChecksListForRef(token: string, owner: string, repo: string, ref: string) {
+  const octokit = new Octokit({ auth: token });
+  const { data } = await octokit.rest.checks.listForRef({ owner, repo, ref });
   return data;
 }

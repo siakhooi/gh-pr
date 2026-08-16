@@ -1,5 +1,11 @@
 import { getTokenOrExit } from './token.js';
-import { searchPullRequests, getPulls, getPullsReviews, getUsersAuthenticated } from './github.js';
+import {
+  searchPullRequests,
+  getPulls,
+  getPullsReviews,
+  getUsersAuthenticated,
+  getChecksListForRef,
+} from './github.js';
 
 interface AutoReviewCommandOptions {
   assignedToMe: boolean;
@@ -60,8 +66,10 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
         );
         continue;
       }
+      console.log(`PR: ${owner}/${repo}/${pull_number}`);
       const pull = await getPulls(token, owner, repo, pull_number);
-      console.log(`Pulls: ${pull.mergeable}, ${pull.mergeable_state}, ${pull.commit}`);
+      const commit = pull.commit;
+      // console.log(`Pulls: ${pull.mergeable}, ${pull.mergeable_state}, ${pull.commit}`);
       // if (!pull.mergeable || pull.mergeable_state !== 'clean') {
       //   console.log(`SKIP: Pulls not mergeable: ${pull.mergeable}, ${pull.mergeable_state}`);
       //   continue;
@@ -70,7 +78,9 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
       // check if reviewed before
       const reviews = await getPullsReviews(token, owner, repo, pull_number);
       const myUser = await getUsersAuthenticated(token);
-      const myReview = reviews.some((review) => review.user?.login === myUser.login);
+      const myReview = reviews.some(
+        (review) => review.user?.login === myUser.login && review.state === 'APPROVED',
+      );
       if (myReview) {
         console.log(
           `SKIP: The pull request ${owner}/${repo}/${pull_number} has been reviewed by current user ${myUser.login}`,
@@ -79,6 +89,15 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
       }
 
       // check if pipeline run success
+      const checks = await getChecksListForRef(token, owner, repo, commit);
+      if (checks.total_count === 0) {
+        console.log(`SKIP: no checks have been done.`);
+        continue;
+      }
+      if (!checks.check_runs.every((c) => c.conclusion === 'success')) {
+        console.log(`SKIP: not all checks success`);
+        continue;
+      }
 
       // submit review
       console.log('DO SOMETHING?');
