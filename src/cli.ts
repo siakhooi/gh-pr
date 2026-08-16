@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command, InvalidOptionArgumentError } from 'commander';
 
-import { performListCommand, performAutoReviewCommand } from './index.js';
+import { performListCommand, performAutoReviewCommand, performAutoMergeCommand } from './index.js';
 import { getVersion } from './version.js';
 
 const program = new Command();
@@ -75,5 +75,30 @@ program
     '1',
   )
   .action((options) => performAutoReviewCommand(options));
+
+program
+  .command('automerge')
+  .description('auto merge selected pull requests')
+  .option('--assigned-to-me', 'Assigned to me, assignee=@me', false)
+  .option('--authored-by-me', 'Authored by me, author:@me', false)
+  .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false)
+  .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
+  .option(
+    '-l, --limit <int>',
+    'Number of Records to retrieve, positive number',
+    parsePositiveNumber,
+    '3',
+  )
+  .option('-u, --user <username>', 'User')
+  .option('-R, --repo <user/repo>', 'Repo: user/repo_name')
+  .option('--label <label>', 'label/topic, allow multiple', collectLabels, [])
+  .option('--max-update <int>', 'Maximum Auto Merge, positive number', parsePositiveNumber, '2')
+  .option(
+    '--max-update-per-repo <int>',
+    'Maximum Auto Merge per Repo, positive number',
+    parsePositiveNumber,
+    '1',
+  )
+  .action((options) => performAutoMergeCommand(options));
 
 program.parse(process.argv);
