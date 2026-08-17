@@ -5,6 +5,7 @@ import {
   getPullsReviews,
   getUsersAuthenticated,
   getChecksListForRef,
+  mergePullRequest,
 } from './github.js';
 interface AutoMergeCommandOptions {
   assignedToMe: boolean;
@@ -92,8 +93,8 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
       }
 
       // submit review
-      console.log('Doing something');
-      console.log('Auto Merge');
+      mergePullRequest(token, owner, repo, pull_number, commit);
+      console.log('Auto Merged');
 
       updateCount = updateCount + 1;
       repoUpdateCountMap[repo_url] = (repoUpdateCountMap[repo_url] || 0) + 1;
