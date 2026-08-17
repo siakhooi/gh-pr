@@ -8,8 +8,6 @@ build:
     npm run build
 run *options:
     node dist/cli.js {{ options }}
-run1:
-    just run automerge --assigned-to-me --authored-by-dependabot --label dependencies --limit 10 --label github_actions --max-update 1 --max-update-per-repo 1
 all:
     just clean
     just set-version
