@@ -8,6 +8,9 @@ cli to run some frequently use gh pr commands
 $ gh-pr
 ```
 
+## Example
+See <https://github.com/siakhooi/my-repo-management>
+
 ## Locations
 
 ### Source Code
