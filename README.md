@@ -9,6 +9,7 @@ $ gh-pr
 ```
 
 ## Example
+
 See <https://github.com/siakhooi/my-repo-management>
 
 ## Locations
