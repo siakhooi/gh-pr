@@ -47,23 +47,17 @@ export class GithubClient {
     const { data } = await this.octokit.rest.checks.listForRef({ owner, repo, ref });
     return data;
   }
+  public async createReview(owner: string, repo: string, pull_number: number) {
+    await this.octokit.rest.pulls.createReview({
+      owner,
+      repo,
+      pull_number,
+      body: 'Automatically approved by gh-pr.',
+      event: 'APPROVE',
+    });
+  }
 }
 
-export async function createReviews(
-  token: string,
-  owner: string,
-  repo: string,
-  pull_number: number,
-) {
-  const octokit = new Octokit({ auth: token });
-  await octokit.rest.pulls.createReview({
-    owner,
-    repo,
-    pull_number,
-    body: 'Automatically approved by gh-pr.',
-    event: 'APPROVE',
-  });
-}
 export async function mergePullRequest(
   token: string,
   owner: string,

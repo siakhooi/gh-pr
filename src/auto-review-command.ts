@@ -1,5 +1,5 @@
 import { getTokenOrExit } from './token.js';
-import { GithubClient, createReviews } from './github.js';
+import { GithubClient } from './github.js';
 
 interface AutoReviewCommandOptions {
   assignedToMe: boolean;
@@ -85,7 +85,7 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
       }
 
       // submit review
-      createReviews(token, owner, repo, pull_number);
+      await githubClient.createReview(owner, repo, pull_number);
       console.log('Auto Reviewed');
 
       updateCount = updateCount + 1;
