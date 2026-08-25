@@ -1,5 +1,5 @@
 import { getTokenOrExit } from './token.js';
-import { GithubClient, getChecksListForRef, mergePullRequest } from './github.js';
+import { GithubClient, mergePullRequest } from './github.js';
 interface AutoMergeCommandOptions {
   assignedToMe: boolean;
   authoredByMe: boolean;
@@ -73,7 +73,7 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
         continue;
       }
       // check if pipeline run success
-      const checks = await getChecksListForRef(token, owner, repo, commit);
+      const checks = await githubClient.getChecksListForRef(owner, repo, commit);
       if (checks.total_count === 0) {
         console.log(`SKIP: No checks have been done.`);
         continue;

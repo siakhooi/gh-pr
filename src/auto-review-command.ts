@@ -1,5 +1,5 @@
 import { getTokenOrExit } from './token.js';
-import { GithubClient, getChecksListForRef, createReviews } from './github.js';
+import { GithubClient, createReviews } from './github.js';
 
 interface AutoReviewCommandOptions {
   assignedToMe: boolean;
@@ -74,7 +74,7 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
       }
 
       // check if pipeline run success
-      const checks = await getChecksListForRef(token, owner, repo, commit);
+      const checks = await githubClient.getChecksListForRef(owner, repo, commit);
       if (checks.total_count === 0) {
         console.log(`SKIP: No checks have been done.`);
         continue;
