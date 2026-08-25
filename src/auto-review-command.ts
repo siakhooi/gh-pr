@@ -12,6 +12,7 @@ interface AutoReviewCommandOptions {
   user: string;
   repo: string;
   label: string[];
+  dryRun: boolean;
   maxUpdate: number;
   maxUpdatePerRepo: number;
 }
@@ -85,8 +86,12 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
       }
 
       // submit review
-      await githubClient.createReview(owner, repo, pull_number);
-      console.log('Auto Reviewed');
+      if (options.dryRun) {
+        console.log('Dry Run: Would auto review');
+      } else {
+        await githubClient.createReview(owner, repo, pull_number);
+        console.log('Auto reviewed');
+      }
 
       updateCount = updateCount + 1;
       repoUpdateCountMap[repo_url] = (repoUpdateCountMap[repo_url] || 0) + 1;
