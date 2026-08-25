@@ -51,7 +51,7 @@ program
 
 program
   .command('autoreview')
-  .description('auto review selected pull requests')
+  .description('auto review open pull requests')
   .option('--assigned-to-me', 'Assigned to me, assignee:@me', false)
   .option('--requested-my-review', 'requested my review, user-review-requested:@me', false)
   .option('--authored-by-me', 'Authored by me, author:@me', false)
@@ -78,7 +78,7 @@ program
 
 program
   .command('automerge')
-  .description('auto merge selected pull requests')
+  .description('auto merge open pull requests that were approved by current user')
   .option('--assigned-to-me', 'Assigned to me, assignee:@me', false)
   .option('--authored-by-me', 'Authored by me, author:@me', false)
   .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false)
