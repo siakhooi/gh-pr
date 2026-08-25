@@ -55,6 +55,7 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
   const repoUpdateCountMap: Record<string, number> = {};
 
   searchPullRequests(token, query, options.limit).then(async (data) => {
+    console.log(`${data.length} records retrieved.`);
     for (const pr of data) {
       const repo_url = pr.repo_url;
       const repo = pr.repo;
