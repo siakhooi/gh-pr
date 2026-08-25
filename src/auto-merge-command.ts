@@ -1,12 +1,5 @@
 import { getTokenOrExit } from './token.js';
-import {
-  searchPullRequests,
-  getPulls,
-  getPullsReviews,
-  getUsersAuthenticated,
-  getChecksListForRef,
-  mergePullRequest,
-} from './github.js';
+import { GithubClient } from './github.js';
 interface AutoMergeCommandOptions {
   assignedToMe: boolean;
   authoredByMe: boolean;
@@ -44,11 +37,12 @@ function buildPullRequestSearchQuery(options: AutoMergeCommandOptions): string[]
 }
 export async function performAutoMergeCommand(options: AutoMergeCommandOptions): void {
   const token = getTokenOrExit();
+  const githubClient = new GithubClient(token);
   const query = buildPullRequestSearchQuery(options);
   let updateCount = 0;
   const repoUpdateCountMap: Record<string, number> = {};
 
-  searchPullRequests(token, query, options.limit).then(async (data) => {
+  githubClient.searchPullRequests(query, options.limit).then(async (data) => {
     console.log(`${data.length} records retrieved.`);
     for (const pr of data) {
       const repo_url = pr.repo_url;
@@ -61,7 +55,7 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
         console.log(`SKIP: Reached max update limit of ${options.maxUpdatePerRepo}.`);
         continue;
       }
-      const pull = await getPulls(token, owner, repo, pull_number);
+      const pull = await githubClient.getPulls(owner, repo, pull_number);
       const commit = pull.commit;
       // check if mergeable
       if (!pull.mergeable || pull.mergeable_state !== 'clean') {
@@ -69,8 +63,8 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
         continue;
       }
       // check if reviewed and approved by current user
-      const reviews = await getPullsReviews(token, owner, repo, pull_number);
-      const myUser = await getUsersAuthenticated(token);
+      const reviews = await githubClient.getPullsReviews(owner, repo, pull_number);
+      const myUser = await githubClient.getUsersAuthenticated();
       const myReview = reviews.some(
         (review) => review.user?.login === myUser.login && review.state === 'APPROVED',
       );
@@ -79,7 +73,7 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
         continue;
       }
       // check if pipeline run success
-      const checks = await getChecksListForRef(token, owner, repo, commit);
+      const checks = await githubClient.getChecksListForRef(owner, repo, commit);
       if (checks.total_count === 0) {
         console.log(`SKIP: No checks have been done.`);
         continue;
@@ -90,7 +84,7 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
       }
 
       // submit review
-      mergePullRequest(token, owner, repo, pull_number, commit);
+      await githubClient.mergePullRequest(owner, repo, pull_number, commit);
       console.log('Auto Merged');
 
       updateCount = updateCount + 1;

@@ -1,14 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { performListCommand } from '../src/list-command.js';
 import { getTokenOrExit } from '../src/token.js';
-import { searchPullRequests } from '../src/github.js';
 import { printListData } from '../src/printer.js';
+
+const searchPullRequests = vi.fn();
 
 vi.mock('../src/token.js', () => ({
   getTokenOrExit: vi.fn(),
 }));
 vi.mock('../src/github.js', () => ({
-  searchPullRequests: vi.fn(),
+  GithubClient: vi.fn(function () {
+    return {
+      searchPullRequests,
+    };
+  }),
 }));
 vi.mock('../src/printer.js', () => ({
   printListData: vi.fn(),
@@ -40,7 +45,6 @@ describe('performListCommand', () => {
 
     await vi.waitFor(() => {
       expect(searchPullRequests).toHaveBeenCalledWith(
-        'token-123',
         [
           'is:pr',
           'is:open',
@@ -80,7 +84,7 @@ describe('performListCommand', () => {
     });
 
     await vi.waitFor(() => {
-      expect(searchPullRequests).toHaveBeenCalledWith('token-456', ['is:pr', 'is:open'], 5);
+      expect(searchPullRequests).toHaveBeenCalledWith(['is:pr', 'is:open'], 5);
     });
 
     expect(printListData).toHaveBeenCalledWith([]);

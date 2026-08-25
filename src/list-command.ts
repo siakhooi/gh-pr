@@ -1,5 +1,5 @@
 import { getTokenOrExit } from './token.js';
-import { searchPullRequests } from './github.js';
+import { GithubClient } from './github.js';
 import { printListData } from './printer.js';
 
 interface ListCommandOptions {
@@ -43,7 +43,8 @@ function buildPullRequestSearchQuery(options: ListCommandOptions): string[] {
 
 export function performListCommand(options: ListCommandOptions): void {
   const token = getTokenOrExit();
+  const githubClient = new GithubClient(token);
   const query = buildPullRequestSearchQuery(options);
 
-  searchPullRequests(token, query, options.limit).then((data) => printListData(data));
+  githubClient.searchPullRequests(query, options.limit).then((data) => printListData(data));
 }
