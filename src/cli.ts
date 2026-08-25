@@ -67,6 +67,7 @@ program
   .option('-u, --user <username>', 'User, user:<username>')
   .option('-R, --repo <user/repo>', 'Repo, repo:<user/repo_name>')
   .option('--label <label>', 'label/topic, allow multiple, label:<label>', collectLabels, [])
+  .option('-n, --dry-run', 'Dry run', false)
   .option('--max-update <int>', 'Maximum Auto Review, positive number', parsePositiveNumber, '2')
   .option(
     '--max-update-per-repo <int>',
@@ -92,6 +93,7 @@ program
   .option('-u, --user <username>', 'User, user:<username>')
   .option('-R, --repo <user/repo>', 'Repo, repo:<user/repo_name>')
   .option('--label <label>', 'label/topic, allow multiple, label:<label>', collectLabels, [])
+  .option('-n, --dry-run', 'Dry run', false)
   .option('--max-update <int>', 'Maximum Auto Merge, positive number', parsePositiveNumber, '2')
   .option(
     '--max-update-per-repo <int>',
