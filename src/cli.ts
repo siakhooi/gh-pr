@@ -32,8 +32,8 @@ function collectLabels(value: string, collection: string[]): string[] {
 program
   .command('list')
   .description('list open pull requests')
-  .option('--assigned-to-me', 'Assigned to me, assignee=@me', false)
-  .option('--requested-my-review', 'requested my review, review-requested=@me', false)
+  .option('--assigned-to-me', 'Assigned to me, assignee:@me', false)
+  .option('--requested-my-review', 'requested my review, user-review-requested:@me', false)
   .option('--authored-by-me', 'Authored by me, author:@me', false)
   .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false)
   .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
@@ -44,16 +44,16 @@ program
     parsePositiveNumber,
     '3',
   )
-  .option('-u, --user <username>', 'User')
-  .option('-R, --repo <user/repo>', 'Repo: user/repo_name')
-  .option('--label <label>', 'label/topic, allow multiple', collectLabels, [])
+  .option('-u, --user <username>', 'User, user:<username>')
+  .option('-R, --repo <user/repo>', 'Repo, repo:<user/repo_name>')
+  .option('--label <label>', 'label/topic, allow multiple, label:<label>', collectLabels, [])
   .action((options) => performListCommand(options));
 
 program
   .command('autoreview')
   .description('auto review selected pull requests')
-  .option('--assigned-to-me', 'Assigned to me, assignee=@me', false)
-  .option('--requested-my-review', 'requested my review, review-requested=@me', false)
+  .option('--assigned-to-me', 'Assigned to me, assignee:@me', false)
+  .option('--requested-my-review', 'requested my review, user-review-requested:@me', false)
   .option('--authored-by-me', 'Authored by me, author:@me', false)
   .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false)
   .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
@@ -64,9 +64,9 @@ program
     parsePositiveNumber,
     '3',
   )
-  .option('-u, --user <username>', 'User')
-  .option('-R, --repo <user/repo>', 'Repo: user/repo_name')
-  .option('--label <label>', 'label/topic, allow multiple', collectLabels, [])
+  .option('-u, --user <username>', 'User, user:<username>')
+  .option('-R, --repo <user/repo>', 'Repo, repo:<user/repo_name>')
+  .option('--label <label>', 'label/topic, allow multiple, label:<label>', collectLabels, [])
   .option('--max-update <int>', 'Maximum Auto Review, positive number', parsePositiveNumber, '2')
   .option(
     '--max-update-per-repo <int>',
@@ -79,7 +79,7 @@ program
 program
   .command('automerge')
   .description('auto merge selected pull requests')
-  .option('--assigned-to-me', 'Assigned to me, assignee=@me', false)
+  .option('--assigned-to-me', 'Assigned to me, assignee:@me', false)
   .option('--authored-by-me', 'Authored by me, author:@me', false)
   .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false)
   .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
@@ -89,9 +89,9 @@ program
     parsePositiveNumber,
     '3',
   )
-  .option('-u, --user <username>', 'User')
-  .option('-R, --repo <user/repo>', 'Repo: user/repo_name')
-  .option('--label <label>', 'label/topic, allow multiple', collectLabels, [])
+  .option('-u, --user <username>', 'User, user:<username>')
+  .option('-R, --repo <user/repo>', 'Repo, repo:<user/repo_name>')
+  .option('--label <label>', 'label/topic, allow multiple, label:<label>', collectLabels, [])
   .option('--max-update <int>', 'Maximum Auto Merge, positive number', parsePositiveNumber, '2')
   .option(
     '--max-update-per-repo <int>',

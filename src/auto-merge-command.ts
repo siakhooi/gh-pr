@@ -58,9 +58,7 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
 
       console.log(`PR: ${pr.repository}/${pull_number}`);
       if (repoUpdateCountMap[repo_url] >= options.maxUpdatePerRepo) {
-        console.log(
-          `SKIP: Reached max update limit of ${options.maxUpdatePerRepo}.`,
-        );
+        console.log(`SKIP: Reached max update limit of ${options.maxUpdatePerRepo}.`);
         continue;
       }
       const pull = await getPulls(token, owner, repo, pull_number);
@@ -77,9 +75,7 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
         (review) => review.user?.login === myUser.login && review.state === 'APPROVED',
       );
       if (!myReview) {
-        console.log(
-          `SKIP: Has not been reviewed and approved by current user ${myUser.login}`,
-        );
+        console.log(`SKIP: Has not been reviewed and approved by current user ${myUser.login}`);
         continue;
       }
       // check if pipeline run success
