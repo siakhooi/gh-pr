@@ -1,5 +1,5 @@
 import { getTokenOrExit } from './token.js';
-import { GithubClient, mergePullRequest } from './github.js';
+import { GithubClient } from './github.js';
 interface AutoMergeCommandOptions {
   assignedToMe: boolean;
   authoredByMe: boolean;
@@ -84,7 +84,7 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
       }
 
       // submit review
-      mergePullRequest(token, owner, repo, pull_number, commit);
+      await githubClient.mergePullRequest(owner, repo, pull_number, commit);
       console.log('Auto Merged');
 
       updateCount = updateCount + 1;

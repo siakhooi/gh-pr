@@ -56,22 +56,14 @@ export class GithubClient {
       event: 'APPROVE',
     });
   }
-}
-
-export async function mergePullRequest(
-  token: string,
-  owner: string,
-  repo: string,
-  pull_number: number,
-  sha: string,
-) {
-  const octokit = new Octokit({ auth: token });
-  const { data } = await octokit.rest.pulls.merge({
-    owner,
-    repo,
-    pull_number,
-    sha: sha,
-    merge_method: 'squash',
-  });
-  return data;
+  public async mergePullRequest(owner: string, repo: string, pull_number: number, sha: string) {
+    const { data } = await this.octokit.rest.pulls.merge({
+      owner,
+      repo,
+      pull_number,
+      sha: sha,
+      merge_method: 'squash',
+    });
+    return data;
+  }
 }
