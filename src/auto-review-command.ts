@@ -1,6 +1,6 @@
 import { getTokenOrExit } from './token.js';
 import {
-  searchPullRequests,
+  GithubClient,
   getPulls,
   getPullsReviews,
   getUsersAuthenticated,
@@ -50,11 +50,12 @@ function buildPullRequestSearchQuery(options: AutoReviewCommandOptions): string[
 }
 export async function performAutoReviewCommand(options: AutoReviewCommandOptions): void {
   const token = getTokenOrExit();
+  const githubClient = new GithubClient(token);
   const query = buildPullRequestSearchQuery(options);
   let updateCount = 0;
   const repoUpdateCountMap: Record<string, number> = {};
 
-  searchPullRequests(token, query, options.limit).then(async (data) => {
+  githubClient.searchPullRequests(query, options.limit).then(async (data) => {
     console.log(`${data.length} records retrieved.`);
     for (const pr of data) {
       const repo_url = pr.repo_url;
