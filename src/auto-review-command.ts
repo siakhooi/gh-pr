@@ -1,7 +1,6 @@
 import { getTokenOrExit } from './token.js';
 import {
   GithubClient,
-  getPullsReviews,
   getUsersAuthenticated,
   getChecksListForRef,
   createReviews,
@@ -71,7 +70,7 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
       const commit = pull.commit;
 
       // check if reviewed before
-      const reviews = await getPullsReviews(token, owner, repo, pull_number);
+      const reviews = await githubClient.getPullsReviews(owner, repo, pull_number);
       const myUser = await getUsersAuthenticated(token);
       const myReview = reviews.some((review) => review.user?.login === myUser.login);
       if (myReview) {

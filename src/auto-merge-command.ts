@@ -1,7 +1,6 @@
 import { getTokenOrExit } from './token.js';
 import {
   GithubClient,
-  getPullsReviews,
   getUsersAuthenticated,
   getChecksListForRef,
   mergePullRequest,
@@ -69,7 +68,7 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
         continue;
       }
       // check if reviewed and approved by current user
-      const reviews = await getPullsReviews(token, owner, repo, pull_number);
+      const reviews = await githubClient.getPullsReviews(owner, repo, pull_number);
       const myUser = await getUsersAuthenticated(token);
       const myReview = reviews.some(
         (review) => review.user?.login === myUser.login && review.state === 'APPROVED',

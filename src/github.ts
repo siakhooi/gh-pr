@@ -35,18 +35,12 @@ export class GithubClient {
       commit: data.head.sha,
     };
   }
+  public async getPullsReviews(owner: string, repo: string, pull_number: number) {
+    const { data } = await this.octokit.rest.pulls.listReviews({ owner, repo, pull_number });
+    return data;
+  }
 }
 
-export async function getPullsReviews(
-  token: string,
-  owner: string,
-  repo: string,
-  pull_number: number,
-) {
-  const octokit = new Octokit({ auth: token });
-  const { data } = await octokit.rest.pulls.listReviews({ owner, repo, pull_number });
-  return data;
-}
 export async function getUsersAuthenticated(token: string) {
   const octokit = new Octokit({ auth: token });
   const { data } = await octokit.rest.users.getAuthenticated();
