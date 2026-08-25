@@ -49,19 +49,18 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
   const repoUpdateCountMap: Record<string, number> = {};
 
   searchPullRequests(token, query, options.limit).then(async (data) => {
+    console.log(`${data.length} records retrieved.`);
     for (const pr of data) {
       const repo_url = pr.repo_url;
       const repo = pr.repo;
       const owner = pr.owner;
       const pull_number = pr.number;
 
+      console.log(`PR: ${pr.repository}/${pull_number}`);
       if (repoUpdateCountMap[repo_url] >= options.maxUpdatePerRepo) {
-        console.log(
-          `SKIP: ${pr.repository} Reached max update limit of ${options.maxUpdatePerRepo} for repo ${repo_url}.`,
-        );
+        console.log(`SKIP: Reached max update limit of ${options.maxUpdatePerRepo}.`);
         continue;
       }
-      console.log(`PR: ${owner}/${repo}/${pull_number}`);
       const pull = await getPulls(token, owner, repo, pull_number);
       const commit = pull.commit;
       // check if mergeable
@@ -76,19 +75,17 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
         (review) => review.user?.login === myUser.login && review.state === 'APPROVED',
       );
       if (!myReview) {
-        console.log(
-          `SKIP: The pull request ${owner}/${repo}/${pull_number} has not been reviewed and approved by current user ${myUser.login}`,
-        );
+        console.log(`SKIP: Has not been reviewed and approved by current user ${myUser.login}`);
         continue;
       }
       // check if pipeline run success
       const checks = await getChecksListForRef(token, owner, repo, commit);
       if (checks.total_count === 0) {
-        console.log(`SKIP: no checks have been done.`);
+        console.log(`SKIP: No checks have been done.`);
         continue;
       }
       if (!checks.check_runs.every((c) => c.conclusion === 'success' && c.status === 'completed')) {
-        console.log(`SKIP: not all checks success`);
+        console.log(`SKIP: Not all checks success`);
         continue;
       }
 
