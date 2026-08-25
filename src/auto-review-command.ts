@@ -1,10 +1,5 @@
 import { getTokenOrExit } from './token.js';
-import {
-  GithubClient,
-  getUsersAuthenticated,
-  getChecksListForRef,
-  createReviews,
-} from './github.js';
+import { GithubClient, getChecksListForRef, createReviews } from './github.js';
 
 interface AutoReviewCommandOptions {
   assignedToMe: boolean;
@@ -71,7 +66,7 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
 
       // check if reviewed before
       const reviews = await githubClient.getPullsReviews(owner, repo, pull_number);
-      const myUser = await getUsersAuthenticated(token);
+      const myUser = await githubClient.getUsersAuthenticated();
       const myReview = reviews.some((review) => review.user?.login === myUser.login);
       if (myReview) {
         console.log(`SKIP: Has been reviewed by current user ${myUser.login}`);

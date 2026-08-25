@@ -39,13 +39,12 @@ export class GithubClient {
     const { data } = await this.octokit.rest.pulls.listReviews({ owner, repo, pull_number });
     return data;
   }
+  public async getUsersAuthenticated() {
+    const { data } = await this.octokit.rest.users.getAuthenticated();
+    return { login: data.login };
+  }
 }
 
-export async function getUsersAuthenticated(token: string) {
-  const octokit = new Octokit({ auth: token });
-  const { data } = await octokit.rest.users.getAuthenticated();
-  return { login: data.login };
-}
 export async function getChecksListForRef(token: string, owner: string, repo: string, ref: string) {
   const octokit = new Octokit({ auth: token });
   const { data } = await octokit.rest.checks.listForRef({ owner, repo, ref });
