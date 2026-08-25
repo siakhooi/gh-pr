@@ -68,8 +68,10 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
       // check if reviewed before
       const reviews = await githubClient.getPullsReviews(owner, repo, pull_number);
       const myUser = await githubClient.getUsersAuthenticated();
-      const myReview = reviews.some((review) => review.user?.login === myUser.login);
-      if (myReview) {
+      const hasMyReviewOnCurrentCommit = reviews.some(
+        (review) => review.user?.login === myUser.login && review.commit_id === commit,
+      );
+      if (hasMyReviewOnCurrentCommit) {
         console.log(`SKIP: Has been reviewed by current user ${myUser.login}`);
         continue;
       }

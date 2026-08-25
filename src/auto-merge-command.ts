@@ -66,10 +66,13 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
       // check if reviewed and approved by current user
       const reviews = await githubClient.getPullsReviews(owner, repo, pull_number);
       const myUser = await githubClient.getUsersAuthenticated();
-      const myReview = reviews.some(
-        (review) => review.user?.login === myUser.login && review.state === 'APPROVED',
+      const hasMyReviewOnCurrentCommit = reviews.some(
+        (review) =>
+          review.user?.login === myUser.login &&
+          review.state === 'APPROVED' &&
+          review.commit_id === commit,
       );
-      if (!myReview) {
+      if (!hasMyReviewOnCurrentCommit) {
         console.log(`SKIP: Has not been reviewed and approved by current user ${myUser.login}`);
         continue;
       }
