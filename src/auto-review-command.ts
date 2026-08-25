@@ -1,7 +1,6 @@
 import { getTokenOrExit } from './token.js';
 import {
   GithubClient,
-  getPulls,
   getPullsReviews,
   getUsersAuthenticated,
   getChecksListForRef,
@@ -68,7 +67,7 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
         console.log(`SKIP: Reached max update limit of ${options.maxUpdatePerRepo}.`);
         continue;
       }
-      const pull = await getPulls(token, owner, repo, pull_number);
+      const pull = await githubClient.getPulls(owner, repo, pull_number);
       const commit = pull.commit;
 
       // check if reviewed before

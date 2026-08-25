@@ -27,16 +27,16 @@ export class GithubClient {
       };
     });
   }
+  public async getPulls(owner: string, repo: string, pull_number: number) {
+    const { data } = await this.octokit.rest.pulls.get({ owner, repo, pull_number });
+    return {
+      mergeable: data.mergeable,
+      mergeable_state: data.mergeable_state,
+      commit: data.head.sha,
+    };
+  }
 }
-export async function getPulls(token: string, owner: string, repo: string, pull_number: number) {
-  const octokit = new Octokit({ auth: token });
-  const { data } = await octokit.rest.pulls.get({ owner, repo, pull_number });
-  return {
-    mergeable: data.mergeable,
-    mergeable_state: data.mergeable_state,
-    commit: data.head.sha,
-  };
-}
+
 export async function getPullsReviews(
   token: string,
   owner: string,
