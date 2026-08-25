@@ -15,7 +15,7 @@ export async function searchPullRequests(token: string, query: string[], countPe
       title: item.title,
       pr_url: item.html_url,
       repo_url: item.repository_url,
-      repository: `$owner/$repo`,
+      repository: `${owner}/${repo}`,
       repo: repo,
       owner: owner,
       number: item.number,
