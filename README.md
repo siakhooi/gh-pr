@@ -1,11 +1,66 @@
 # gh-pr
 
-cli to run some frequently use gh pr commands
+CLI for frequently used GitHub pull request workflows. Search open PRs, approve ones whose checks already passed, and squash-merge PRs you have approved.
+
+The tool talks to the GitHub REST API through Octokit. Every command needs a `GITHUB_TOKEN` with access to search issues, read pull requests and checks, submit reviews, and merge.
+
+## Installation
+
+Install globally from npm:
+
+```bash
+npm install -g @siakhooi/gh-pr
+```
+
+Or run without installing:
+
+```bash
+npx @siakhooi/gh-pr --help
+```
+
+The package is also published on [GitHub Packages](https://github.com/siakhooi/gh-pr/pkgs/npm/gh-pr).
+
+Set a GitHub personal access token before running any command:
+
+```bash
+export GITHUB_TOKEN=ghp_...
+```
+
+## Commands
+
+`gh-pr` has three main commands. Shared filters (`--assigned-to-me`, `--authored-by-me`, `--authored-by-dependabot`, `--authored-by-renovate`, `-u`/`--user`, `-R`/`--repo`, `--label`, `-l`/`--limit`) narrow GitHub search results. Default `--limit` is 3.
+
+### list
+
+Search open pull requests and print them as JSON (title, URLs, repo, number, labels, `updated_at`). Extra filters: `--requested-my-review`, `--not-yet-reviewed`.
+
+### autoreview
+
+Find matching open PRs, skip ones you already reviewed on the current head commit or whose checks are missing or failing, then approve them. Use `-n`/`--dry-run` first. Caps: `--max-update` (default 2) and `--max-update-per-repo` (default 1).
+
+### automerge
+
+Find open PRs that are already approved, skip unless they are mergeable (`clean`), you approved the current commit, and all checks succeeded, then squash-merge. Same dry-run and max-update guards as `autoreview`.
 
 ## Usage
 
-```
-$ gh-pr
+```bash
+gh-pr --help
+gh-pr list --help
+
+# List open PRs assigned to you
+gh-pr list --assigned-to-me
+
+# Dependabot PRs that still need a review
+gh-pr list --authored-by-dependabot --not-yet-reviewed -l 10
+
+# Preview approvals, then approve PRs that requested your review
+gh-pr autoreview --requested-my-review --dry-run
+gh-pr autoreview --requested-my-review --max-update 2 --max-update-per-repo 1
+
+# Merge approved Dependabot PRs in one repo
+gh-pr automerge --authored-by-dependabot --dry-run
+gh-pr automerge --authored-by-dependabot -R owner/repo
 ```
 
 ## Example
