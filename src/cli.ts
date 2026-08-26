@@ -26,18 +26,18 @@ function createBaseCommand(name: string, description: string) {
     .option('--assigned-to-me', 'Assigned to me, assignee:@me', false)
     .option('--authored-by-me', 'Authored by me, author:@me', false)
     .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false)
-    .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false);
-}
-program.addCommand(
-  createBaseCommand('list', 'list open pull requests')
-    .option('--requested-my-review', 'requested my review, user-review-requested:@me', false)
-    .option('--not-yet-reviewed', 'Not yet reviewed, review:none', false)
+    .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
     .option(
       '-l, --limit <int>',
       'Number of Records to retrieve, positive number',
       parsePositiveNumber,
       '3',
-    )
+    );
+}
+program.addCommand(
+  createBaseCommand('list', 'list open pull requests')
+    .option('--requested-my-review', 'requested my review, user-review-requested:@me', false)
+    .option('--not-yet-reviewed', 'Not yet reviewed, review:none', false)
     .option('-u, --user <username>', 'User, user:<username>')
     .option('-R, --repo <user/repo>', 'Repo, repo:<user/repo_name>')
     .option('--label <label>', 'label/topic, allow multiple, label:<label>', collectLabels, [])
@@ -49,12 +49,6 @@ program.addCommand(
     .option('--requested-my-review', 'requested my review, user-review-requested:@me', false)
     .option('--not-yet-reviewed', 'Not yet reviewed, review:none', false)
     .option('--allow-no-checks', 'review pull requests without any checks', false)
-    .option(
-      '-l, --limit <int>',
-      'Number of Records to retrieve, positive number',
-      parsePositiveNumber,
-      '3',
-    )
     .option('-u, --user <username>', 'User, user:<username>')
     .option('-R, --repo <user/repo>', 'Repo, repo:<user/repo_name>')
     .option('--label <label>', 'label/topic, allow multiple, label:<label>', collectLabels, [])
@@ -72,12 +66,6 @@ program.addCommand(
 program.addCommand(
   createBaseCommand('automerge', 'auto merge open pull requests that were approved by current user')
     .option('--allow-no-checks', 'merge pull requests without any checks', false)
-    .option(
-      '-l, --limit <int>',
-      'Number of Records to retrieve, positive number',
-      parsePositiveNumber,
-      '3',
-    )
     .option('-u, --user <username>', 'User, user:<username>')
     .option('-R, --repo <user/repo>', 'Repo, repo:<user/repo_name>')
     .option('--label <label>', 'label/topic, allow multiple, label:<label>', collectLabels, [])
