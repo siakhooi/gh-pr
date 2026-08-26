@@ -32,15 +32,15 @@ function createBaseCommand(name: string, description: string) {
       'Number of Records to retrieve, positive number',
       parsePositiveNumber,
       '3',
-    );
+    )
+    .option('-u, --user <username>', 'User, user:<username>')
+    .option('-R, --repo <user/repo>', 'Repo, repo:<user/repo_name>')
+    .option('--label <label>', 'label/topic, allow multiple, label:<label>', collectLabels, []);
 }
 program.addCommand(
   createBaseCommand('list', 'list open pull requests')
     .option('--requested-my-review', 'requested my review, user-review-requested:@me', false)
     .option('--not-yet-reviewed', 'Not yet reviewed, review:none', false)
-    .option('-u, --user <username>', 'User, user:<username>')
-    .option('-R, --repo <user/repo>', 'Repo, repo:<user/repo_name>')
-    .option('--label <label>', 'label/topic, allow multiple, label:<label>', collectLabels, [])
     .action((options) => performListCommand(options)),
 );
 
@@ -49,9 +49,6 @@ program.addCommand(
     .option('--requested-my-review', 'requested my review, user-review-requested:@me', false)
     .option('--not-yet-reviewed', 'Not yet reviewed, review:none', false)
     .option('--allow-no-checks', 'review pull requests without any checks', false)
-    .option('-u, --user <username>', 'User, user:<username>')
-    .option('-R, --repo <user/repo>', 'Repo, repo:<user/repo_name>')
-    .option('--label <label>', 'label/topic, allow multiple, label:<label>', collectLabels, [])
     .option('-n, --dry-run', 'Dry run', false)
     .option('--max-update <int>', 'Maximum Auto Review, positive number', parsePositiveNumber, '2')
     .option(
@@ -66,9 +63,6 @@ program.addCommand(
 program.addCommand(
   createBaseCommand('automerge', 'auto merge open pull requests that were approved by current user')
     .option('--allow-no-checks', 'merge pull requests without any checks', false)
-    .option('-u, --user <username>', 'User, user:<username>')
-    .option('-R, --repo <user/repo>', 'Repo, repo:<user/repo_name>')
-    .option('--label <label>', 'label/topic, allow multiple, label:<label>', collectLabels, [])
     .option('-n, --dry-run', 'Dry run', false)
     .option('--max-update <int>', 'Maximum Auto Merge, positive number', parsePositiveNumber, '2')
     .option(
