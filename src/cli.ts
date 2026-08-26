@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 import { Command, InvalidOptionArgumentError } from 'commander';
 
-import { performListCommand, performAutoReviewCommand, performAutoMergeCommand } from './index.js';
+import {
+  performListCommand,
+  performAutoReviewCommand,
+  performAutoMergeCommand,
+  printVersionCommand,
+} from './index.js';
 import { getVersion } from './version.js';
 
 const program = new Command();
@@ -12,12 +17,7 @@ program
 
 program.helpCommand('help [command]', 'display help for a command');
 
-program
-  .command('version')
-  .description('print version')
-  .action(() => {
-    console.log(getVersion());
-  });
+program.addCommand(new Command('version').description('print version').action(printVersionCommand));
 
 function parsePositiveNumber(value: string): number {
   const parsedValue = Number.parseInt(value, 10);

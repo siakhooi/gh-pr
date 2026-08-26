@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { printListMock, getVersionMock } = vi.hoisted(() => ({
+const { printListMock, printVersionCommandMock, getVersionMock } = vi.hoisted(() => ({
   printListMock: vi.fn(),
+  printVersionCommandMock: vi.fn(),
   getVersionMock: vi.fn(() => '9.9.9'),
 }));
 
 vi.mock('../src/index.js', () => ({
   performListCommand: printListMock,
+  printVersionCommand: printVersionCommandMock,
 }));
 
 vi.mock('../src/version.js', () => ({
