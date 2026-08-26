@@ -1,46 +1,11 @@
 import { getTokenOrExit } from './token.js';
 import { GithubClient } from './github.js';
-interface AutoMergeCommandOptions {
-  assignedToMe: boolean;
-  authoredByMe: boolean;
-  authoredByDependabot: boolean;
-  authoredByRenovate: boolean;
-  allowNoChecks: boolean;
-  limit: number;
-  user: string;
-  repo: string;
-  label: string[];
-  dryRun: boolean;
-  maxUpdate: number;
-  maxUpdatePerRepo: number;
-}
-function buildPullRequestSearchQuery(options: AutoMergeCommandOptions): string[] {
-  const query: string[] = ['is:pr', 'is:open', 'review:approved'];
-  const filters: Array<[boolean, string]> = [
-    [options.assignedToMe, 'assignee:@me'],
-    [options.authoredByMe, 'author:@me'],
-    [options.authoredByDependabot, 'author:app/dependabot'],
-    [options.authoredByRenovate, 'author:app/renovate'],
-    [Boolean(options.user), `user:${options.user}`],
-    [Boolean(options.repo), `repo:${options.repo}`],
-  ];
+import { AutoMergeCommandOptions, buildPullRequestSearchQuery } from './command-options.js';
 
-  for (const [enabled, term] of filters) {
-    if (enabled) query.push(term);
-  }
-
-  if (options.label && options.label.length > 0) {
-    for (const label of options.label) {
-      query.push(`label:${label}`);
-    }
-  }
-
-  return query;
-}
-export async function performAutoMergeCommand(options: AutoMergeCommandOptions): void {
+export async function performAutoMergeCommand(options: AutoMergeCommandOptions): Promise<void> {
   const token = getTokenOrExit();
   const githubClient = new GithubClient(token);
-  const query = buildPullRequestSearchQuery(options);
+  const query = buildPullRequestSearchQuery(options, true);
   let updateCount = 0;
   const repoUpdateCountMap: Record<string, number> = {};
 

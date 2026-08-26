@@ -1,49 +1,8 @@
 import { getTokenOrExit } from './token.js';
 import { GithubClient } from './github.js';
+import { AutoReviewCommandOptions, buildPullRequestSearchQuery } from './command-options.js';
 
-interface AutoReviewCommandOptions {
-  assignedToMe: boolean;
-  requestedMyReview: boolean;
-  authoredByMe: boolean;
-  authoredByDependabot: boolean;
-  authoredByRenovate: boolean;
-  notYetReviewed: boolean;
-  allowNoChecks: boolean;
-  limit: number;
-  user: string;
-  repo: string;
-  label: string[];
-  dryRun: boolean;
-  maxUpdate: number;
-  maxUpdatePerRepo: number;
-}
-
-function buildPullRequestSearchQuery(options: AutoReviewCommandOptions): string[] {
-  const query: string[] = ['is:pr', 'is:open'];
-  const filters: Array<[boolean, string]> = [
-    [options.assignedToMe, 'assignee:@me'],
-    [options.requestedMyReview, 'user-review-requested:@me'],
-    [options.authoredByMe, 'author:@me'],
-    [options.authoredByDependabot, 'author:app/dependabot'],
-    [options.authoredByRenovate, 'author:app/renovate'],
-    [options.notYetReviewed, 'review:none'],
-    [Boolean(options.user), `user:${options.user}`],
-    [Boolean(options.repo), `repo:${options.repo}`],
-  ];
-
-  for (const [enabled, term] of filters) {
-    if (enabled) query.push(term);
-  }
-
-  if (options.label && options.label.length > 0) {
-    for (const label of options.label) {
-      query.push(`label:${label}`);
-    }
-  }
-
-  return query;
-}
-export async function performAutoReviewCommand(options: AutoReviewCommandOptions): void {
+export async function performAutoReviewCommand(options: AutoReviewCommandOptions): Promise<void> {
   const token = getTokenOrExit();
   const githubClient = new GithubClient(token);
   const query = buildPullRequestSearchQuery(options);
