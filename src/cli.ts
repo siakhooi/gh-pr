@@ -37,6 +37,7 @@ function createBaseCommand(name: string, description: string) {
     .option('-R, --repo <user/repo>', 'Repo, repo:<user/repo_name>')
     .option('--label <label>', 'label/topic, allow multiple, label:<label>', collectLabels, []);
 }
+
 program.addCommand(
   createBaseCommand('list', 'list open pull requests')
     .option('--requested-my-review', 'requested my review, user-review-requested:@me', false)
