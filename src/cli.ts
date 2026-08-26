@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { Command, InvalidOptionArgumentError } from 'commander';
+import { Command } from 'commander';
 
 import {
   performListCommand,
@@ -8,6 +8,7 @@ import {
   printVersionCommand,
 } from './index.js';
 import { getVersion } from './version.js';
+import { collectLabels, parsePositiveNumber } from './cli-args-parsers.js';
 
 const program = new Command();
 program
@@ -19,16 +20,6 @@ program.helpCommand('help [command]', 'display help for a command');
 
 program.addCommand(new Command('version').description('print version').action(printVersionCommand));
 
-function parsePositiveNumber(value: string): number {
-  const parsedValue = Number.parseInt(value, 10);
-  if (Number.isNaN(parsedValue)) throw new InvalidOptionArgumentError('Not a number');
-  if (parsedValue < 1) throw new InvalidOptionArgumentError('Must be a positive number');
-  return parsedValue;
-}
-
-function collectLabels(value: string, collection: string[]): string[] {
-  return collection.concat([value]);
-}
 program
   .command('list')
   .description('list open pull requests')
