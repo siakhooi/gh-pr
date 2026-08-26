@@ -1,4 +1,4 @@
-export interface ListCommandOptions {
+interface BaseCommandOptions {
   assignedToMe: boolean;
   requestedMyReview: boolean;
   authoredByMe: boolean;
@@ -10,19 +10,10 @@ export interface ListCommandOptions {
   repo: string;
   label: string[];
 }
+export type ListCommandOptions = BaseCommandOptions
 
-export interface AutoReviewCommandOptions {
-  assignedToMe: boolean;
-  requestedMyReview: boolean;
-  authoredByMe: boolean;
-  authoredByDependabot: boolean;
-  authoredByRenovate: boolean;
-  notYetReviewed: boolean;
+export interface AutoReviewCommandOptions extends BaseCommandOptions {
   allowNoChecks: boolean;
-  limit: number;
-  user: string;
-  repo: string;
-  label: string[];
   dryRun: boolean;
   maxUpdate: number;
   maxUpdatePerRepo: number;
