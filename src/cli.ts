@@ -25,13 +25,12 @@ function createBaseCommand(name: string, description: string) {
     .description(description)
     .option('--assigned-to-me', 'Assigned to me, assignee:@me', false)
     .option('--authored-by-me', 'Authored by me, author:@me', false)
-    .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false);
+    .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false)
+    .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false);
 }
 program.addCommand(
   createBaseCommand('list', 'list open pull requests')
     .option('--requested-my-review', 'requested my review, user-review-requested:@me', false)
-    
-    .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
     .option('--not-yet-reviewed', 'Not yet reviewed, review:none', false)
     .option(
       '-l, --limit <int>',
@@ -48,7 +47,6 @@ program.addCommand(
 program.addCommand(
   createBaseCommand('autoreview', 'auto review open pull requests')
     .option('--requested-my-review', 'requested my review, user-review-requested:@me', false)
-    .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
     .option('--not-yet-reviewed', 'Not yet reviewed, review:none', false)
     .option('--allow-no-checks', 'review pull requests without any checks', false)
     .option(
@@ -73,7 +71,6 @@ program.addCommand(
 
 program.addCommand(
   createBaseCommand('automerge', 'auto merge open pull requests that were approved by current user')
-    .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
     .option('--allow-no-checks', 'merge pull requests without any checks', false)
     .option(
       '-l, --limit <int>',
