@@ -58,6 +58,7 @@ program
   .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false)
   .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
   .option('--not-yet-reviewed', 'Not yet reviewed, review:none', false)
+  .option('--allow-no-checks', 'review pull requests without any checks', false)
   .option(
     '-l, --limit <int>',
     'Number of Records to retrieve, positive number',
@@ -84,6 +85,7 @@ program
   .option('--authored-by-me', 'Authored by me, author:@me', false)
   .option('--authored-by-dependabot', 'Authored by dependabot, author:app/dependabot', false)
   .option('--authored-by-renovate', 'Authored by renovate, author:app/renovate', false)
+  .option('--allow-no-checks', 'merge pull requests without any checks', false)
   .option(
     '-l, --limit <int>',
     'Number of Records to retrieve, positive number',
