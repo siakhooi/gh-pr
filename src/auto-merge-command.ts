@@ -5,6 +5,7 @@ interface AutoMergeCommandOptions {
   authoredByMe: boolean;
   authoredByDependabot: boolean;
   authoredByRenovate: boolean;
+  allowNoChecks: boolean;
   limit: number;
   user: string;
   repo: string;
@@ -78,7 +79,7 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
       }
       // check if pipeline run success
       const checks = await githubClient.getChecksListForRef(owner, repo, commit);
-      if (checks.total_count === 0) {
+      if (!options.allowNoChecks && checks.total_count === 0) {
         console.log(`SKIP: No checks have been done.`);
         continue;
       }
