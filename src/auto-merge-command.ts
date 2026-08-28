@@ -1,7 +1,7 @@
 import { getTokenOrExit } from './token.js';
 import { GithubClient } from './github.js';
 import { AutoMergeCommandOptions, buildPullRequestSearchQuery } from './command-options.js';
-import { UpdateContext } from './update-breakers.js';
+import { UpdateContext } from './update-context.js';
 
 export async function performAutoMergeCommand(options: AutoMergeCommandOptions): Promise<void> {
   const token = getTokenOrExit();
