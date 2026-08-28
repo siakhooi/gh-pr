@@ -17,22 +17,19 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
   githubClient.searchPullRequests(query, options.limit).then(async (data) => {
     console.log(`${data.length} records retrieved.`);
     for (const pr of data) {
-      const repo = pr.repo;
-      const owner = pr.owner;
-      const pull_number = pr.number;
 
-      console.log(`PR: ${pr.repository}/${pull_number}`);
+      console.log(`PR: ${pr.repository}/${pr.number}`);
       if (updateContext.hasExceedRepoMaxUpdateLimit(pr.repo_url)) continue;
 
-      const pull = await githubClient.getPulls(owner, repo, pull_number);
+      const pull = await githubClient.getPulls(pr.owner, pr.repo, pr.number);
 
       // check if reviewed before
-      const reviews = await githubClient.getPullsReviews(owner, repo, pull_number);
+      const reviews = await githubClient.getPullsReviews(pr.owner, pr.repo, pr.number);
       const myUser = await githubClient.getUsersAuthenticated();
       if (hasMyReviewOnCurrentCommit(reviews, myUser.login, pull.commit)) continue;
 
       // check if pipeline run success
-      const checks = await githubClient.getChecksListForRef(owner, repo, pull.commit);
+      const checks = await githubClient.getChecksListForRef(pr.owner, pr.repo, pull.commit);
       if (noChecksHaveBeenDone(checks.total_count, options.allowNoChecks)) continue;
 
       if (notAllChecksSuccess(checks.check_runs)) continue;
@@ -41,7 +38,7 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
       if (options.dryRun) {
         console.log('Dry Run: Would auto review');
       } else {
-        await githubClient.createReview(owner, repo, pull_number);
+        await githubClient.createReview(pr.owner, pr.repo, pr.number);
         console.log('Auto reviewed');
       }
 
