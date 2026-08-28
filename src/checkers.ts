@@ -34,6 +34,16 @@ export function hasMyApprovedReviewOnCurrentCommit(
   }
   return false;
 }
+export function pullNotMergeable(pull: {
+  mergeable: boolean | null;
+  mergeable_state: string;
+}): boolean {
+  if (!pull.mergeable || pull.mergeable_state !== 'clean') {
+    console.log(`SKIP: Pull not mergeable: ${pull.mergeable}, ${pull.mergeable_state}`);
+    return true;
+  }
+  return false;
+}
 export function noChecksHaveBeenDone(total_count: number, allowNoChecks: boolean): boolean {
   if (!allowNoChecks && total_count === 0) {
     console.log(`SKIP: No checks have been done.`);

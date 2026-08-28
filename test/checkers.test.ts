@@ -4,6 +4,7 @@ import {
   hasMyReviewOnCurrentCommit,
   noChecksHaveBeenDone,
   notAllChecksSuccess,
+  pullNotMergeable,
 } from '../src/checkers.js';
 
 const review = (overrides: Record<string, unknown> = {}) => ({
@@ -54,6 +55,31 @@ describe('checkers', () => {
         hasMyApprovedReviewOnCurrentCommit([review({ state: 'APPROVED' })], 'octocat', 'def456'),
       ).toBe(false);
       expect(log).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('pullNotMergeable', () => {
+    it('returns false for a mergeable pull with a clean state', () => {
+      expect(pullNotMergeable({ mergeable: true, mergeable_state: 'clean' })).toBe(false);
+      expect(log).not.toHaveBeenCalled();
+    });
+
+    it('returns true and logs when the pull is not mergeable', () => {
+      expect(pullNotMergeable({ mergeable: false, mergeable_state: 'dirty' })).toBe(true);
+
+      expect(log).toHaveBeenCalledWith('SKIP: Pull not mergeable: false, dirty');
+    });
+
+    it('returns true and logs when the mergeable state is not clean', () => {
+      expect(pullNotMergeable({ mergeable: true, mergeable_state: 'blocked' })).toBe(true);
+
+      expect(log).toHaveBeenCalledWith('SKIP: Pull not mergeable: true, blocked');
+    });
+
+    it('returns true and logs when mergeability is unknown', () => {
+      expect(pullNotMergeable({ mergeable: null, mergeable_state: 'clean' })).toBe(true);
+
+      expect(log).toHaveBeenCalledWith('SKIP: Pull not mergeable: null, clean');
     });
   });
 
