@@ -1,27 +1,24 @@
 import { getTokenOrExit } from './token.js';
 import { GithubClient } from './github.js';
 import { AutoMergeCommandOptions, buildPullRequestSearchQuery } from './command-options.js';
+import { UpdateContext } from './update-breakers.js';
 
 export async function performAutoMergeCommand(options: AutoMergeCommandOptions): Promise<void> {
   const token = getTokenOrExit();
   const githubClient = new GithubClient(token);
   const query = buildPullRequestSearchQuery(options, true);
-  let updateCount = 0;
-  const repoUpdateCountMap: Record<string, number> = {};
+  const updateContext = new UpdateContext(options.maxUpdatePerRepo, options.maxUpdate);
 
   githubClient.searchPullRequests(query, options.limit).then(async (data) => {
     console.log(`${data.length} records retrieved.`);
     for (const pr of data) {
-      const repo_url = pr.repo_url;
       const repo = pr.repo;
       const owner = pr.owner;
       const pull_number = pr.number;
 
       console.log(`PR: ${pr.repository}/${pull_number}`);
-      if (repoUpdateCountMap[repo_url] >= options.maxUpdatePerRepo) {
-        console.log(`SKIP: Reached max update limit of ${options.maxUpdatePerRepo}.`);
-        continue;
-      }
+      if (updateContext.hasExceedRepoMaxUpdateLimit(pr.repo_url)) continue;
+
       const pull = await githubClient.getPulls(owner, repo, pull_number);
       const commit = pull.commit;
       // check if mergeable
@@ -60,13 +57,8 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
         await githubClient.mergePullRequest(owner, repo, pull_number, commit);
         console.log('Auto Merged');
       }
-      updateCount = updateCount + 1;
-      repoUpdateCountMap[repo_url] = (repoUpdateCountMap[repo_url] || 0) + 1;
-
-      if (updateCount >= options.maxUpdate) {
-        console.log(`STOP: Reached max update limit of ${options.maxUpdate}.`);
-        break;
-      }
+      updateContext.updateRepo(pr.repo_url);
+      if (updateContext.hasExceedMaxUpdateLimit()) break;
     }
   });
 }
