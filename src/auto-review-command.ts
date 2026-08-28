@@ -17,7 +17,6 @@ export async function performAutoReviewCommand(options: AutoReviewCommandOptions
   githubClient.searchPullRequests(query, options.limit).then(async (data) => {
     console.log(`${data.length} records retrieved.`);
     for (const pr of data) {
-
       console.log(`PR: ${pr.repository}/${pr.number}`);
       if (updateContext.hasExceedRepoMaxUpdateLimit(pr.repo_url)) continue;
 
