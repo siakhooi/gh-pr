@@ -1,6 +1,6 @@
 {
   "name": "@siakhooi/gh-pr",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "cli to run some frequently use gh pr commands",
   "type": "module",
   "publishConfig": {
