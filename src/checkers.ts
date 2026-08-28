@@ -1,8 +1,8 @@
 interface PullsReviews {
   user: {
     login: string;
-  };
-  commit_id: string;
+  } | null;
+  commit_id: string | null;
   state: string;
 }
 export function hasMyReviewOnCurrentCommit(
@@ -42,7 +42,9 @@ export function noChecksHaveBeenDone(total_count: number, allowNoChecks: boolean
   return false;
 }
 
-export function notAllChecksSuccess(checkRuns: { conclusion: string; status: string }[]): boolean {
+export function notAllChecksSuccess(
+  checkRuns: { conclusion: string | null; status: string }[],
+): boolean {
   if (!checkRuns.every((c) => c.conclusion === 'success' && c.status === 'completed')) {
     console.log(`SKIP: Not all checks success`);
     return true;
