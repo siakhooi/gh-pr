@@ -3,6 +3,7 @@ interface PullsReviews {
     login: string;
   };
   commit_id: string;
+  state: string;
 }
 export function hasMyReviewOnCurrentCommit(
   reviews: PullsReviews[],
@@ -11,6 +12,24 @@ export function hasMyReviewOnCurrentCommit(
 ): boolean {
   if (reviews.some((review) => review.user?.login === userLogin && review.commit_id === commit)) {
     console.log(`SKIP: Has been reviewed by current user ${userLogin}`);
+    return true;
+  }
+  return false;
+}
+export function hasMyApprovedReviewOnCurrentCommit(
+  reviews: PullsReviews[],
+  userLogin: string,
+  commit: string,
+): boolean {
+  if (
+    reviews.some(
+      (review) =>
+        review.user?.login === userLogin &&
+        review.state === 'APPROVED' &&
+        review.commit_id === commit,
+    )
+  ) {
+    console.log(`SKIP: Has been reviewed and approved by current user ${userLogin}`);
     return true;
   }
   return false;

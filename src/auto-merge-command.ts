@@ -2,7 +2,11 @@ import { getTokenOrExit } from './token.js';
 import { GithubClient } from './github.js';
 import { AutoMergeCommandOptions, buildPullRequestSearchQuery } from './command-options.js';
 import { UpdateContext } from './update-context.js';
-import { noChecksHaveBeenDone } from './checkers.js';
+import {
+  noChecksHaveBeenDone,
+  hasMyApprovedReviewOnCurrentCommit,
+  notAllChecksSuccess,
+} from './checkers.js';
 
 export async function performAutoMergeCommand(options: AutoMergeCommandOptions): Promise<void> {
   const token = getTokenOrExit();
@@ -30,24 +34,13 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
       // check if reviewed and approved by current user
       const reviews = await githubClient.getPullsReviews(owner, repo, pull_number);
       const myUser = await githubClient.getUsersAuthenticated();
-      const hasMyReviewOnCurrentCommit = reviews.some(
-        (review) =>
-          review.user?.login === myUser.login &&
-          review.state === 'APPROVED' &&
-          review.commit_id === commit,
-      );
-      if (!hasMyReviewOnCurrentCommit) {
-        console.log(`SKIP: Has not been reviewed and approved by current user ${myUser.login}`);
-        continue;
-      }
+      if (hasMyApprovedReviewOnCurrentCommit(reviews, myUser.login, commit)) continue;
+
       // check if pipeline run success
       const checks = await githubClient.getChecksListForRef(owner, repo, commit);
       if (noChecksHaveBeenDone(checks.total_count, options.allowNoChecks)) continue;
 
-      if (!checks.check_runs.every((c) => c.conclusion === 'success' && c.status === 'completed')) {
-        console.log(`SKIP: Not all checks success`);
-        continue;
-      }
+      if (notAllChecksSuccess(checks.check_runs)) continue;
 
       // submit review
       if (options.dryRun) {
