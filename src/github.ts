@@ -1,7 +1,7 @@
 import { Octokit } from '@octokit/rest';
 
 export class GithubClient {
-  private octokit: Octokit;
+  private readonly octokit: Octokit;
   constructor(token: string) {
     this.octokit = new Octokit({ auth: token });
   }
