@@ -6,6 +6,7 @@ import {
   noChecksHaveBeenDone,
   hasMyApprovedReviewOnCurrentCommit,
   notAllChecksSuccess,
+  pullNotMergeable,
 } from './checkers.js';
 
 export async function performAutoMergeCommand(options: AutoMergeCommandOptions): Promise<void> {
@@ -23,10 +24,8 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
       const pull = await githubClient.getPulls(pr.owner, pr.repo, pr.number);
       const commit = pull.commit;
       // check if mergeable
-      if (!pull.mergeable || pull.mergeable_state !== 'clean') {
-        console.log(`SKIP: Pull not mergeable: ${pull.mergeable}, ${pull.mergeable_state}`);
-        continue;
-      }
+      if (pullNotMergeable(pull)) continue;
+
       // check if reviewed and approved by current user
       const reviews = await githubClient.getPullsReviews(pr.owner, pr.repo, pr.number);
       const myUser = await githubClient.getUsersAuthenticated();
