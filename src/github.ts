@@ -37,7 +37,12 @@ export class GithubClient {
   }
   public async getPullsReviews(owner: string, repo: string, pull_number: number) {
     const { data } = await this.octokit.rest.pulls.listReviews({ owner, repo, pull_number });
-    return data;
+    return data.map((review) => ({
+      id: review.id,
+      user: review.user,
+      commit_id: review.commit_id,
+      state: review.state,
+    }));
   }
   public async getUsersAuthenticated() {
     const { data } = await this.octokit.rest.users.getAuthenticated();
@@ -45,7 +50,14 @@ export class GithubClient {
   }
   public async getChecksListForRef(owner: string, repo: string, ref: string) {
     const { data } = await this.octokit.rest.checks.listForRef({ owner, repo, ref });
-    return data;
+    return {
+      total_count: data.total_count,
+      check_runs: data.check_runs.map((check) => ({
+        name: check.name,
+        status: check.status,
+        conclusion: check.conclusion,
+      })),
+    };
   }
   public async createReview(owner: string, repo: string, pull_number: number) {
     await this.octokit.rest.pulls.createReview({

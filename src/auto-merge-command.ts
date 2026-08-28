@@ -2,6 +2,7 @@ import { getTokenOrExit } from './token.js';
 import { GithubClient } from './github.js';
 import { AutoMergeCommandOptions, buildPullRequestSearchQuery } from './command-options.js';
 import { UpdateContext } from './update-context.js';
+import { noChecksHaveBeenDone } from './checkers.js';
 
 export async function performAutoMergeCommand(options: AutoMergeCommandOptions): Promise<void> {
   const token = getTokenOrExit();
@@ -41,10 +42,8 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
       }
       // check if pipeline run success
       const checks = await githubClient.getChecksListForRef(owner, repo, commit);
-      if (!options.allowNoChecks && checks.total_count === 0) {
-        console.log(`SKIP: No checks have been done.`);
-        continue;
-      }
+      if (noChecksHaveBeenDone(checks.total_count, options.allowNoChecks)) continue;
+
       if (!checks.check_runs.every((c) => c.conclusion === 'success' && c.status === 'completed')) {
         console.log(`SKIP: Not all checks success`);
         continue;
