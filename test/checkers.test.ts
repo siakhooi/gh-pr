@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  hasMyApprovedReviewOnCurrentCommit,
+  doesNotHaveMyApprovedReviewOnCurrentCommit,
   hasMyReviewOnCurrentCommit,
   noChecksHaveBeenDone,
   notAllChecksSuccess,
@@ -35,26 +35,51 @@ describe('checkers', () => {
     });
   });
 
-  describe('hasMyApprovedReviewOnCurrentCommit', () => {
-    it('returns true and logs for an approved review on the current commit', () => {
-      expect(
-        hasMyApprovedReviewOnCurrentCommit([review({ state: 'APPROVED' })], 'octocat', 'abc123'),
-      ).toBe(true);
-
+  describe('doesNotHaveMyApprovedReviewOnCurrentCommit', () => {
+    it('returns true and logs when the user does not have an approved review on the current commit', () => {
+      expect(doesNotHaveMyApprovedReviewOnCurrentCommit([review()], 'octocat', 'abc123')).toBe(
+        true,
+      );
       expect(log).toHaveBeenCalledWith(
-        'SKIP: Has been reviewed and approved by current user octocat',
+        'SKIP: Does not have approved review from current user octocat',
       );
     });
 
-    it('returns false for a non-approved, different-user, or old-commit review', () => {
-      expect(hasMyApprovedReviewOnCurrentCommit([review()], 'octocat', 'abc123')).toBe(false);
+    it('returns false when the user has an approved review on the current commit', () => {
       expect(
-        hasMyApprovedReviewOnCurrentCommit([review({ state: 'APPROVED' })], 'hubot', 'abc123'),
-      ).toBe(false);
-      expect(
-        hasMyApprovedReviewOnCurrentCommit([review({ state: 'APPROVED' })], 'octocat', 'def456'),
+        doesNotHaveMyApprovedReviewOnCurrentCommit(
+          [review({ state: 'APPROVED' })],
+          'octocat',
+          'abc123',
+        ),
       ).toBe(false);
       expect(log).not.toHaveBeenCalled();
+    });
+
+    it('returns true for different user or old commit even with approved review', () => {
+      log.mockClear();
+      expect(
+        doesNotHaveMyApprovedReviewOnCurrentCommit(
+          [review({ state: 'APPROVED' })],
+          'hubot',
+          'abc123',
+        ),
+      ).toBe(true);
+      expect(log).toHaveBeenCalledWith(
+        'SKIP: Does not have approved review from current user hubot',
+      );
+
+      log.mockClear();
+      expect(
+        doesNotHaveMyApprovedReviewOnCurrentCommit(
+          [review({ state: 'APPROVED' })],
+          'octocat',
+          'def456',
+        ),
+      ).toBe(true);
+      expect(log).toHaveBeenCalledWith(
+        'SKIP: Does not have approved review from current user octocat',
+      );
     });
   });
 

@@ -16,20 +16,20 @@ export function hasMyReviewOnCurrentCommit(
   }
   return false;
 }
-export function hasMyApprovedReviewOnCurrentCommit(
+export function doesNotHaveMyApprovedReviewOnCurrentCommit(
   reviews: PullsReviews[],
   userLogin: string,
   commit: string,
 ): boolean {
   if (
-    reviews.some(
+    !reviews.some(
       (review) =>
         review.user?.login === userLogin &&
         review.state === 'APPROVED' &&
         review.commit_id === commit,
     )
   ) {
-    console.log(`SKIP: Has been reviewed and approved by current user ${userLogin}`);
+    console.log(`SKIP: Does not have approved review from current user ${userLogin}`);
     return true;
   }
   return false;
