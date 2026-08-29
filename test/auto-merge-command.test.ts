@@ -60,7 +60,9 @@ describe('performAutoMergeCommand', () => {
       mergeable: true,
       mergeable_state: 'clean',
     });
-    githubClient.getPullsReviews.mockResolvedValue([]);
+    githubClient.getPullsReviews.mockResolvedValue([
+      { user: { login: 'octocat' }, commit_id: 'abc123', state: 'APPROVED' },
+    ]);
     githubClient.getUsersAuthenticated.mockResolvedValue({ login: 'octocat' });
     githubClient.getChecksListForRef.mockResolvedValue({
       total_count: 1,
@@ -124,10 +126,8 @@ describe('performAutoMergeCommand', () => {
     expect(githubClient.mergePullRequest).not.toHaveBeenCalled();
   });
 
-  it('skips a pull request already approved on the current commit', async () => {
-    githubClient.getPullsReviews.mockResolvedValue([
-      { user: { login: 'octocat' }, commit_id: 'abc123', state: 'APPROVED' },
-    ]);
+  it('skips a pull request when the user has not approved it', async () => {
+    githubClient.getPullsReviews.mockResolvedValue([]);
 
     performAutoMergeCommand(options);
 
@@ -138,6 +138,9 @@ describe('performAutoMergeCommand', () => {
   });
 
   it('skips when no checks have been done unless allowed', async () => {
+    githubClient.getPullsReviews.mockResolvedValue([
+      { user: { login: 'octocat' }, commit_id: 'abc123', state: 'APPROVED' },
+    ]);
     githubClient.getChecksListForRef.mockResolvedValue({ total_count: 0, check_runs: [] });
 
     performAutoMergeCommand(options);
@@ -148,6 +151,9 @@ describe('performAutoMergeCommand', () => {
   });
 
   it('merges when no checks have been done and that is allowed', async () => {
+    githubClient.getPullsReviews.mockResolvedValue([
+      { user: { login: 'octocat' }, commit_id: 'abc123', state: 'APPROVED' },
+    ]);
     githubClient.getChecksListForRef.mockResolvedValue({ total_count: 0, check_runs: [] });
 
     performAutoMergeCommand({ ...options, allowNoChecks: true });
@@ -158,6 +164,9 @@ describe('performAutoMergeCommand', () => {
   });
 
   it('skips when not all checks have succeeded', async () => {
+    githubClient.getPullsReviews.mockResolvedValue([
+      { user: { login: 'octocat' }, commit_id: 'abc123', state: 'APPROVED' },
+    ]);
     githubClient.getChecksListForRef.mockResolvedValue({
       total_count: 1,
       check_runs: [{ conclusion: 'failure', status: 'completed' }],

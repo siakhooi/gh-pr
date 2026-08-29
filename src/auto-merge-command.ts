@@ -4,7 +4,7 @@ import { AutoMergeCommandOptions, buildPullRequestSearchQuery } from './command-
 import { UpdateContext } from './update-context.js';
 import {
   noChecksHaveBeenDone,
-  hasMyApprovedReviewOnCurrentCommit,
+  doesNotHaveMyApprovedReviewOnCurrentCommit,
   notAllChecksSuccess,
   pullNotMergeable,
 } from './checkers.js';
@@ -29,7 +29,7 @@ export async function performAutoMergeCommand(options: AutoMergeCommandOptions):
       // check if reviewed and approved by current user
       const reviews = await githubClient.getPullsReviews(pr.owner, pr.repo, pr.number);
       const myUser = await githubClient.getUsersAuthenticated();
-      if (hasMyApprovedReviewOnCurrentCommit(reviews, myUser.login, commit)) continue;
+      if (doesNotHaveMyApprovedReviewOnCurrentCommit(reviews, myUser.login, commit)) continue;
 
       // check if pipeline run success
       const checks = await githubClient.getChecksListForRef(pr.owner, pr.repo, commit);
